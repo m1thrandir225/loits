@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS spells
+
+DROP TABLE IF EXISTS magicians
