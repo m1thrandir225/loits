@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const createMagician = `-- name: CreateMagician :exec
+const createMagician = `-- name: CreateMagician :one
 INSERT INTO magicians (
   email,
   password,
@@ -31,16 +31,16 @@ INSERT INTO magicians (
 `
 
 type CreateMagicianParams struct {
-	Email         string          `json:"email"`
-	Password      string          `json:"password"`
-	OriginalName  string          `json:"original_name"`
-	MagicName     string          `json:"magic_name"`
-	Birthday      time.Time       `json:"birthday"`
-	MagicalRating NullMagicRating `json:"magical_rating"`
+	Email         string      `json:"email"`
+	Password      string      `json:"password"`
+	OriginalName  string      `json:"original_name"`
+	MagicName     string      `json:"magic_name"`
+	Birthday      time.Time   `json:"birthday"`
+	MagicalRating MagicRating `json:"magical_rating"`
 }
 
-func (q *Queries) CreateMagician(ctx context.Context, arg CreateMagicianParams) error {
-	_, err := q.db.Exec(ctx, createMagician,
+func (q *Queries) CreateMagician(ctx context.Context, arg CreateMagicianParams) (Magician, error) {
+	row := q.db.QueryRow(ctx, createMagician,
 		arg.Email,
 		arg.Password,
 		arg.OriginalName,
@@ -48,7 +48,19 @@ func (q *Queries) CreateMagician(ctx context.Context, arg CreateMagicianParams) 
 		arg.Birthday,
 		arg.MagicalRating,
 	)
-	return err
+	var i Magician
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Password,
+		&i.OriginalName,
+		&i.MagicName,
+		&i.Birthday,
+		&i.MagicalRating,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const deleteMagician = `-- name: DeleteMagician :one
@@ -128,8 +140,8 @@ RETURNING id, email, password, original_name, magic_name, birthday, magical_rati
 `
 
 type UpdateMagicalRatingParams struct {
-	ID            uuid.UUID       `json:"id"`
-	MagicalRating NullMagicRating `json:"magical_rating"`
+	ID            uuid.UUID   `json:"id"`
+	MagicalRating MagicRating `json:"magical_rating"`
 }
 
 func (q *Queries) UpdateMagicalRating(ctx context.Context, arg UpdateMagicalRatingParams) (Magician, error) {

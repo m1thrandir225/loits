@@ -1,4 +1,4 @@
--- name: CreateMagician :exec
+-- name: CreateMagician :one
 INSERT INTO magicians (
   email,
   password,

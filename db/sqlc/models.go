@@ -114,15 +114,15 @@ type Book struct {
 }
 
 type Magician struct {
-	ID            uuid.UUID       `json:"id"`
-	Email         string          `json:"email"`
-	Password      string          `json:"password"`
-	OriginalName  string          `json:"original_name"`
-	MagicName     string          `json:"magic_name"`
-	Birthday      time.Time       `json:"birthday"`
-	MagicalRating NullMagicRating `json:"magical_rating"`
-	UpdatedAt     time.Time       `json:"updated_at"`
-	CreatedAt     time.Time       `json:"created_at"`
+	ID            uuid.UUID   `json:"id"`
+	Email         string      `json:"email"`
+	Password      string      `json:"password"`
+	OriginalName  string      `json:"original_name"`
+	MagicName     string      `json:"magic_name"`
+	Birthday      time.Time   `json:"birthday"`
+	MagicalRating MagicRating `json:"magical_rating"`
+	UpdatedAt     time.Time   `json:"updated_at"`
+	CreatedAt     time.Time   `json:"created_at"`
 }
 
 type Spell struct {

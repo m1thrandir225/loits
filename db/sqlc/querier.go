@@ -12,7 +12,7 @@ import (
 )
 
 type Querier interface {
-	CreateMagician(ctx context.Context, arg CreateMagicianParams) error
+	CreateMagician(ctx context.Context, arg CreateMagicianParams) (Magician, error)
 	CreateSpell(ctx context.Context, arg CreateSpellParams) error
 	CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) error
 	DeleteMagician(ctx context.Context, id uuid.UUID) (Magician, error)
