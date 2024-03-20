@@ -7,21 +7,20 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
 	CreateMagician(ctx context.Context, arg CreateMagicianParams) (Magician, error)
-	CreateSpell(ctx context.Context, arg CreateSpellParams) error
-	CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) error
-	DeleteMagician(ctx context.Context, id uuid.UUID) error
-	DeleteSpell(ctx context.Context, id uuid.UUID) error
-	DeleteSpellBook(ctx context.Context, id uuid.UUID) error
+	CreateSpell(ctx context.Context, arg CreateSpellParams) (Spell, error)
+	CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) (Book, error)
+	DeleteMagician(ctx context.Context, id pgtype.UUID) error
+	DeleteSpell(ctx context.Context, id pgtype.UUID) error
+	DeleteSpellBook(ctx context.Context, id pgtype.UUID) error
 	GetMagicianByEmail(ctx context.Context, email string) (Magician, error)
-	GetMagicianById(ctx context.Context, id uuid.UUID) (Magician, error)
-	GetSpellBookById(ctx context.Context, id uuid.UUID) (Book, error)
-	GetSpellById(ctx context.Context, id uuid.UUID) (Spell, error)
+	GetMagicianById(ctx context.Context, id pgtype.UUID) (Magician, error)
+	GetSpellBookById(ctx context.Context, id pgtype.UUID) (Book, error)
+	GetSpellById(ctx context.Context, id pgtype.UUID) (Spell, error)
 	GetSpellByName(ctx context.Context, name string) (Spell, error)
 	GetUserSpellBooks(ctx context.Context, owner pgtype.UUID) ([]Book, error)
 	MoveToNewBook(ctx context.Context, arg MoveToNewBookParams) error

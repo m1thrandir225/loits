@@ -1,5 +1,4 @@
--- name: CreateSpellBook :exec
-
+-- name: CreateSpellBook :one
 INSERT INTO books (
   name,
   owner

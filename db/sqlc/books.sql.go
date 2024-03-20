@@ -8,12 +8,10 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createSpellBook = `-- name: CreateSpellBook :exec
-
+const createSpellBook = `-- name: CreateSpellBook :one
 INSERT INTO books (
   name,
   owner
@@ -28,9 +26,17 @@ type CreateSpellBookParams struct {
 	Owner pgtype.UUID `json:"owner"`
 }
 
-func (q *Queries) CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) error {
-	_, err := q.db.Exec(ctx, createSpellBook, arg.Name, arg.Owner)
-	return err
+func (q *Queries) CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) (Book, error) {
+	row := q.db.QueryRow(ctx, createSpellBook, arg.Name, arg.Owner)
+	var i Book
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Owner,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const deleteSpellBook = `-- name: DeleteSpellBook :exec
@@ -39,7 +45,7 @@ WHERE id = $1
 RETURNING id, name, owner, updated_at, created_at
 `
 
-func (q *Queries) DeleteSpellBook(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteSpellBook(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteSpellBook, id)
 	return err
 }
@@ -49,7 +55,7 @@ SELECT id, name, owner, updated_at, created_at FROM books
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetSpellBookById(ctx context.Context, id uuid.UUID) (Book, error) {
+func (q *Queries) GetSpellBookById(ctx context.Context, id pgtype.UUID) (Book, error) {
 	row := q.db.QueryRow(ctx, getSpellBookById, id)
 	var i Book
 	err := row.Scan(

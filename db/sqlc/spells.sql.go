@@ -8,11 +8,10 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createSpell = `-- name: CreateSpell :exec
+const createSpell = `-- name: CreateSpell :one
 INSERT INTO spells (
   name,
   element,
@@ -30,9 +29,18 @@ type CreateSpellParams struct {
 	BookID  pgtype.UUID `json:"book_id"`
 }
 
-func (q *Queries) CreateSpell(ctx context.Context, arg CreateSpellParams) error {
-	_, err := q.db.Exec(ctx, createSpell, arg.Name, arg.Element, arg.BookID)
-	return err
+func (q *Queries) CreateSpell(ctx context.Context, arg CreateSpellParams) (Spell, error) {
+	row := q.db.QueryRow(ctx, createSpell, arg.Name, arg.Element, arg.BookID)
+	var i Spell
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Element,
+		&i.BookID,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const deleteSpell = `-- name: DeleteSpell :exec
@@ -41,7 +49,7 @@ WHERE id = $1
 RETURNING id, name, element, book_id, updated_at, created_at
 `
 
-func (q *Queries) DeleteSpell(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteSpell(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteSpell, id)
 	return err
 }
@@ -52,7 +60,7 @@ FROM spells
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetSpellById(ctx context.Context, id uuid.UUID) (Spell, error) {
+func (q *Queries) GetSpellById(ctx context.Context, id pgtype.UUID) (Spell, error) {
 	row := q.db.QueryRow(ctx, getSpellById, id)
 	var i Spell
 	err := row.Scan(
@@ -94,7 +102,7 @@ RETURNING id, name, element, book_id, updated_at, created_at
 `
 
 type MoveToNewBookParams struct {
-	ID     uuid.UUID   `json:"id"`
+	ID     pgtype.UUID `json:"id"`
 	BookID pgtype.UUID `json:"book_id"`
 }
 
@@ -111,8 +119,8 @@ RETURNING id, name, element, book_id, updated_at, created_at
 `
 
 type UpdateSpellParams struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	ID   pgtype.UUID `json:"id"`
+	Name string      `json:"name"`
 }
 
 func (q *Queries) UpdateSpell(ctx context.Context, arg UpdateSpellParams) error {
@@ -128,8 +136,8 @@ RETURNING id, name, element, book_id, updated_at, created_at
 `
 
 type UpdateSpellElementParams struct {
-	ID      uuid.UUID `json:"id"`
-	Element Element   `json:"element"`
+	ID      pgtype.UUID `json:"id"`
+	Element Element     `json:"element"`
 }
 
 func (q *Queries) UpdateSpellElement(ctx context.Context, arg UpdateSpellElementParams) error {

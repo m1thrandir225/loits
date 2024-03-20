@@ -9,7 +9,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createMagician = `-- name: CreateMagician :one
@@ -69,7 +69,7 @@ WHERE id = $1
 RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
 `
 
-func (q *Queries) DeleteMagician(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteMagician(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteMagician, id)
 	return err
 }
@@ -103,7 +103,7 @@ FROM magicians
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetMagicianById(ctx context.Context, id uuid.UUID) (Magician, error) {
+func (q *Queries) GetMagicianById(ctx context.Context, id pgtype.UUID) (Magician, error) {
 	row := q.db.QueryRow(ctx, getMagicianById, id)
 	var i Magician
 	err := row.Scan(
@@ -128,7 +128,7 @@ RETURNING id, email, password, original_name, magic_name, birthday, magical_rati
 `
 
 type UpdateMagicalRatingParams struct {
-	ID            uuid.UUID   `json:"id"`
+	ID            pgtype.UUID `json:"id"`
 	MagicalRating MagicRating `json:"magical_rating"`
 }
 
@@ -157,8 +157,8 @@ RETURNING id, email, password, original_name, magic_name, birthday, magical_rati
 `
 
 type UpdatePasswordParams struct {
-	ID       uuid.UUID `json:"id"`
-	Password string    `json:"password"`
+	ID       pgtype.UUID `json:"id"`
+	Password string      `json:"password"`
 }
 
 func (q *Queries) UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (Magician, error) {

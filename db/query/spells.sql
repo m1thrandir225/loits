@@ -1,4 +1,4 @@
--- name: CreateSpell :exec
+-- name: CreateSpell :one
 INSERT INTO spells (
   name,
   element,

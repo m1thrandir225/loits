@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -106,7 +105,7 @@ func (ns NullMagicRating) Value() (driver.Value, error) {
 }
 
 type Book struct {
-	ID        uuid.UUID   `json:"id"`
+	ID        pgtype.UUID `json:"id"`
 	Name      string      `json:"name"`
 	Owner     pgtype.UUID `json:"owner"`
 	UpdatedAt time.Time   `json:"updated_at"`
@@ -114,7 +113,7 @@ type Book struct {
 }
 
 type Magician struct {
-	ID            uuid.UUID   `json:"id"`
+	ID            pgtype.UUID `json:"id"`
 	Email         string      `json:"email"`
 	Password      string      `json:"password"`
 	OriginalName  string      `json:"original_name"`
@@ -126,7 +125,7 @@ type Magician struct {
 }
 
 type Spell struct {
-	ID        uuid.UUID   `json:"id"`
+	ID        pgtype.UUID `json:"id"`
 	Name      string      `json:"name"`
 	Element   Element     `json:"element"`
 	BookID    pgtype.UUID `json:"book_id"`
