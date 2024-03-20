@@ -105,18 +105,31 @@ func (ns NullMagicRating) Value() (driver.Value, error) {
 	return string(ns.MagicRating), nil
 }
 
+type Book struct {
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
+	Owner     pgtype.UUID `json:"owner"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	CreatedAt time.Time   `json:"created_at"`
+}
+
 type Magician struct {
 	ID            uuid.UUID       `json:"id"`
+	Email         string          `json:"email"`
+	Password      string          `json:"password"`
 	OriginalName  string          `json:"original_name"`
 	MagicName     string          `json:"magic_name"`
 	Birthday      time.Time       `json:"birthday"`
 	MagicalRating NullMagicRating `json:"magical_rating"`
+	UpdatedAt     time.Time       `json:"updated_at"`
 	CreatedAt     time.Time       `json:"created_at"`
 }
 
 type Spell struct {
-	ID      uuid.UUID   `json:"id"`
-	Name    string      `json:"name"`
-	Element Element     `json:"element"`
-	Owner   pgtype.UUID `json:"owner"`
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
+	Element   Element     `json:"element"`
+	BookID    pgtype.UUID `json:"book_id"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	CreatedAt time.Time   `json:"created_at"`
 }

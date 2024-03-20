@@ -8,12 +8,27 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
+	CreateMagician(ctx context.Context, arg CreateMagicianParams) error
 	CreateSpell(ctx context.Context, arg CreateSpellParams) error
+	CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) error
+	DeleteMagician(ctx context.Context, id uuid.UUID) (Magician, error)
+	DeleteSpell(ctx context.Context, id uuid.UUID) error
+	DeleteSpellBook(ctx context.Context, id uuid.UUID) error
+	GetMagicianByEmail(ctx context.Context, email string) (Magician, error)
+	GetMagicianById(ctx context.Context, id uuid.UUID) (Magician, error)
+	GetSpellBookById(ctx context.Context, id uuid.UUID) (Book, error)
 	GetSpellById(ctx context.Context, id uuid.UUID) (Spell, error)
 	GetSpellByName(ctx context.Context, name string) (Spell, error)
+	GetUserSpellBooks(ctx context.Context, owner pgtype.UUID) ([]Book, error)
+	MoveToNewBook(ctx context.Context, arg MoveToNewBookParams) error
+	UpdateMagicalRating(ctx context.Context, arg UpdateMagicalRatingParams) (Magician, error)
+	UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (Magician, error)
+	UpdateSpell(ctx context.Context, arg UpdateSpellParams) error
+	UpdateSpellElement(ctx context.Context, arg UpdateSpellElementParams) error
 }
 
 var _ Querier = (*Queries)(nil)
