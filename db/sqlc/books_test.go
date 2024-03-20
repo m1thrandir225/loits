@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 )
 
@@ -49,4 +50,16 @@ func TestGetSpellBookById(t *testing.T) {
 
 func TestGetUserSpellBooks(t *testing.T) {}
 
-func TestDeleteSpellBook(t *testing.T) {}
+func TestDeleteSpellBook(t *testing.T) {
+	initialSpellBook := createRandomSpellBook(t)
+
+	err := testStore.DeleteSpellBook(context.Background(), initialSpellBook.ID)
+
+	require.NoError(t, err)
+
+	spellBook, err := testStore.GetSpellBookById(context.Background(), initialSpellBook.ID)
+
+	require.Error(t, err)
+	require.EqualError(t, err, pgx.ErrNoRows.Error())
+	require.Empty(t, spellBook)
+}
