@@ -15,7 +15,7 @@ type Querier interface {
 	CreateMagician(ctx context.Context, arg CreateMagicianParams) (Magician, error)
 	CreateSpell(ctx context.Context, arg CreateSpellParams) error
 	CreateSpellBook(ctx context.Context, arg CreateSpellBookParams) error
-	DeleteMagician(ctx context.Context, id uuid.UUID) (Magician, error)
+	DeleteMagician(ctx context.Context, id uuid.UUID) error
 	DeleteSpell(ctx context.Context, id uuid.UUID) error
 	DeleteSpellBook(ctx context.Context, id uuid.UUID) error
 	GetMagicianByEmail(ctx context.Context, email string) (Magician, error)

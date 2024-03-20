@@ -37,7 +37,7 @@ SET password = $2
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteMagician :one
+-- name: DeleteMagician :exec
 DELETE FROM magicians
 WHERE id = $1
 RETURNING *;

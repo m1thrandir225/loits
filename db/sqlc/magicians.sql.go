@@ -63,27 +63,15 @@ func (q *Queries) CreateMagician(ctx context.Context, arg CreateMagicianParams) 
 	return i, err
 }
 
-const deleteMagician = `-- name: DeleteMagician :one
+const deleteMagician = `-- name: DeleteMagician :exec
 DELETE FROM magicians
 WHERE id = $1
 RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
 `
 
-func (q *Queries) DeleteMagician(ctx context.Context, id uuid.UUID) (Magician, error) {
-	row := q.db.QueryRow(ctx, deleteMagician, id)
-	var i Magician
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Password,
-		&i.OriginalName,
-		&i.MagicName,
-		&i.Birthday,
-		&i.MagicalRating,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return i, err
+func (q *Queries) DeleteMagician(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteMagician, id)
+	return err
 }
 
 const getMagicianByEmail = `-- name: GetMagicianByEmail :one
