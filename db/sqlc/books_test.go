@@ -11,9 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomSpellBook(t *testing.T) db.Book {
-	owner := createRandomMagician(t)
-
+func createRandomSpellBook(t *testing.T, owner db.Magician) db.Book {
 	arg := db.CreateSpellBookParams{
 		Name:  util.RandomString(6),
 		Owner: owner.ID,
@@ -33,10 +31,12 @@ func createRandomSpellBook(t *testing.T) db.Book {
 }
 
 func TestCreateSpellBook(t *testing.T) {
-	createRandomSpellBook(t)
+	owner := createRandomMagician(t)
+	createRandomSpellBook(t, owner)
 }
 func TestGetSpellBookById(t *testing.T) {
-	initialSpellBook := createRandomSpellBook(t)
+	owner := createRandomMagician(t)
+	initialSpellBook := createRandomSpellBook(t, owner)
 
 	spellBook, err := testStore.GetSpellBookById(context.Background(), initialSpellBook.ID)
 	require.NoError(t, err)
@@ -48,10 +48,31 @@ func TestGetSpellBookById(t *testing.T) {
 	require.WithinDuration(t, initialSpellBook.UpdatedAt, spellBook.UpdatedAt, time.Second)
 }
 
-func TestGetUserSpellBooks(t *testing.T) {}
+func TestGetUserSpellBooks(t *testing.T) {
+	owner := createRandomMagician(t)
+
+	for i := 0; i < 10; i++ {
+		createRandomSpellBook(t, owner)
+	}
+
+	spellBoooks, err := testStore.GetUserSpellBooks(context.Background(), owner.ID)
+
+	require.NoError(t, err)
+
+	for i := 0; i < len(spellBoooks); i++ {
+		spellBook := spellBoooks[i]
+
+		require.Equal(t, spellBook.Owner, owner.ID)
+		require.NotEmpty(t, spellBook.ID)
+		require.NotEmpty(t, spellBook.Name)
+		require.NotEmpty(t, spellBook.UpdatedAt)
+		require.NotEmpty(t, spellBook.CreatedAt)
+	}
+}
 
 func TestDeleteSpellBook(t *testing.T) {
-	initialSpellBook := createRandomSpellBook(t)
+	owner := createRandomMagician(t)
+	initialSpellBook := createRandomSpellBook(t, owner)
 
 	err := testStore.DeleteSpellBook(context.Background(), initialSpellBook.ID)
 

@@ -19,19 +19,24 @@ SELECT *
 FROM spells
 WHERE id = $1 LIMIT 1;
 
--- name: MoveToNewBook :exec
+-- name: GetSpellsByBook :many
+SELECT *
+FROM spells
+WHERE book_id = $1;
+
+-- name: MoveToNewBook :one
 UPDATE spells
 SET book_id = $2
 WHERE id = $1
 RETURNING *;
 
--- name: UpdateSpellElement :exec
+-- name: UpdateSpellElement :one
 UPDATE spells
 SET element = $2
 WHERE id = $1
 RETURNING *;
 
--- name: UpdateSpell :exec
+-- name: UpdateSpell :one
 UPDATE spells
 SET name = $2
 WHERE id = $1
