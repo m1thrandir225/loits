@@ -27,6 +27,14 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
+	router.GET("/spells/:name", server.getSpellByName)
+	router.GET("/spells/:id", server.getSpellById)
+	router.GET("/spells/:book_id", server.getSpellsByBook)
+	router.POST("/spells", server.createSpell)
+	router.PUT("/spells/:id/:element", server.updateSpellElement)
+	router.PUT("/spells/:id/:name", server.updateSpellName)
+	router.DELETE("/spells/:id", server.deleteSpell)
+
 	server.router = router
 }
 
