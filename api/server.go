@@ -27,14 +27,34 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
-	router.GET("/spells/:name", server.getSpellByName)
-	router.GET("/spells/:id", server.getSpellById)
-	router.GET("/spells/:book_id", server.getSpellsByBook)
-	router.POST("/spells", server.createSpell)
-	router.PUT("/spells/:id/:element", server.updateSpellElement)
-	router.PUT("/spells/:id/:name", server.updateSpellName)
-	router.DELETE("/spells/:id", server.deleteSpell)
+	v1 := router.Group("/api/v1")
+	{
+		/*
+		* Spells
+		 */
+		v1.GET("/spells/:id", server.getSpellById)
+		v1.POST("/spells/", server.createSpell)
+		//v1.PUT("/spells/:id", server.updateSpell)
+		v1.DELETE("/spells/:id", server.deleteSpell)
 
+		/*
+		* Spell Books
+		 */
+		v1.POST("/books/", server.createSpellBook)
+		v1.GET("/books/:id", server.getSpellBookById)
+		v1.GET("/books/:id/spells", server.getSpellsByBook)
+		v1.DELETE("/books/:id", server.deleteSpellBook)
+
+		/*
+		 * Magicians
+		 */
+		v1.POST("/register", server.register)
+		v1.POST("/login", server.login)
+
+		v1.GET("/magician/:id", server.getMagician)
+		v1.PUT("/magician/:id", server.updateMagician)
+		v1.DELETE("/magician/:id", server.deleteMagician)
+	}
 	server.router = router
 }
 

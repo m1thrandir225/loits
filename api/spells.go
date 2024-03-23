@@ -23,7 +23,7 @@ type getSpellByIdRequest struct {
 }
 
 type getSpellsByBookRequest struct {
-	BookID pgtype.UUID `uri:"book_id" binding:"required,min=1"`
+	BookID pgtype.UUID `uri:"id" binding:"required,min=1"`
 }
 
 type getSpellsByBookResponse struct {
