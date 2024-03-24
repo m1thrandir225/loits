@@ -111,13 +111,13 @@ const updateSpell = `-- name: UpdateSpell :one
 UPDATE spells 
 SET 
   book_id = CASE WHEN $1::boolean
-  THEN $2::VARCHAR(200) ELSE book_id END,
+  THEN $2::uuid ELSE book_id END,
   
   element = CASE WHEN $3::boolean
   THEN $4::element ELSE element END,
 
   name = CASE WHEN $5::boolean
-  THEN $6::VARCHAR(200) ELSE name END
+  THEN $6::text ELSE name END
 WHERE
   id = $7 
 RETURNING id, name, element, book_id, updated_at, created_at
@@ -125,7 +125,7 @@ RETURNING id, name, element, book_id, updated_at, created_at
 
 type UpdateSpellParams struct {
 	BookIDDoUpdate  bool        `json:"book_id_do_update"`
-	BookID          string      `json:"book_id"`
+	BookID          pgtype.UUID `json:"book_id"`
 	ElementDoUpdate bool        `json:"element_do_update"`
 	Element         Element     `json:"element"`
 	NameDoUpdate    bool        `json:"name_do_update"`

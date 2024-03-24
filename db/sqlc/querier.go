@@ -23,9 +23,10 @@ type Querier interface {
 	GetSpellById(ctx context.Context, id pgtype.UUID) (Spell, error)
 	GetSpellsByBook(ctx context.Context, bookID pgtype.UUID) ([]Spell, error)
 	GetUserSpellBooks(ctx context.Context, owner pgtype.UUID) ([]Book, error)
-	UpdateMagicalRating(ctx context.Context, arg UpdateMagicalRatingParams) (Magician, error)
+	UpdateMagician(ctx context.Context, arg UpdateMagicianParams) (Magician, error)
 	UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (Magician, error)
 	UpdateSpell(ctx context.Context, arg UpdateSpellParams) (Spell, error)
+	UpdateSpellBook(ctx context.Context, arg UpdateSpellBookParams) (Book, error)
 }
 
 var _ Querier = (*Queries)(nil)

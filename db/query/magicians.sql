@@ -25,10 +25,25 @@ FROM magicians
 WHERE id = $1 LIMIT 1;
 
 
--- name: UpdateMagicalRating :one
+-- name: UpdateMagician :one
 UPDATE magicians
-SET magical_rating = $2
-WHERE id = $1
+SET 
+  email = CASE WHEN @email_do_update::boolean
+  THEN @email::text ELSE email END,
+
+  original_name = CASE WHEN @original_name_do_update::boolean
+  THEN @original_name::text ELSE original_name END,
+
+  magic_name = CASE WHEN @magic_name_do_update::boolean
+  THEN @magic_name::text ELSE magic_name END,
+
+  birthday = CASE WHEN @birthday_do_update::boolean
+  THEN @birthday::timestamptz ELSE birthday END,
+
+  magical_rating = CASE WHEN @magical_rating_do_update::boolean
+  THEN @magical_rating::magical_rating ELSE magical_rating END
+WHERE 
+  id = @id 
 RETURNING *;
 
 -- name: UpdatePassword :one

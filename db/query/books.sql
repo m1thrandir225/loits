@@ -16,6 +16,17 @@ WHERE id = $1 LIMIT 1;
 SELECT * FROM books
 WHERE owner = $1;
 
+-- name: UpdateSpellBook :one 
+UPDATE books
+SET 
+  name = CASE WHEN @name_do_update::boolean
+  THEN @name::text ELSE name END,
+  
+  owner = CASE WHEN @owner_do_update::boolean
+  THEN @owner::uuid ELSE owner END
+WHERE  
+  id = @id 
+RETURNING *;
 
 -- name: DeleteSpellBook :exec
 DELETE FROM books

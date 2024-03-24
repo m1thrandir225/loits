@@ -120,20 +120,56 @@ func (q *Queries) GetMagicianById(ctx context.Context, id pgtype.UUID) (Magician
 	return i, err
 }
 
-const updateMagicalRating = `-- name: UpdateMagicalRating :one
+const updateMagician = `-- name: UpdateMagician :one
 UPDATE magicians
-SET magical_rating = $2
-WHERE id = $1
+SET 
+  email = CASE WHEN $1::boolean
+  THEN $2::text ELSE email END,
+
+  original_name = CASE WHEN $3::boolean
+  THEN $4::text ELSE original_name END,
+
+  magic_name = CASE WHEN $5::boolean
+  THEN $6::text ELSE magic_name END,
+
+  birthday = CASE WHEN $7::boolean
+  THEN $8::timestamptz ELSE birthday END,
+
+  magical_rating = CASE WHEN $9::boolean
+  THEN $10::magical_rating ELSE magical_rating END
+WHERE 
+  id = $11 
 RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
 `
 
-type UpdateMagicalRatingParams struct {
-	ID            pgtype.UUID `json:"id"`
-	MagicalRating MagicRating `json:"magical_rating"`
+type UpdateMagicianParams struct {
+	EmailDoUpdate         bool        `json:"email_do_update"`
+	Email                 string      `json:"email"`
+	OriginalNameDoUpdate  bool        `json:"original_name_do_update"`
+	OriginalName          string      `json:"original_name"`
+	MagicNameDoUpdate     bool        `json:"magic_name_do_update"`
+	MagicName             string      `json:"magic_name"`
+	BirthdayDoUpdate      bool        `json:"birthday_do_update"`
+	Birthday              time.Time   `json:"birthday"`
+	MagicalRatingDoUpdate bool        `json:"magical_rating_do_update"`
+	MagicalRating         interface{} `json:"magical_rating"`
+	ID                    pgtype.UUID `json:"id"`
 }
 
-func (q *Queries) UpdateMagicalRating(ctx context.Context, arg UpdateMagicalRatingParams) (Magician, error) {
-	row := q.db.QueryRow(ctx, updateMagicalRating, arg.ID, arg.MagicalRating)
+func (q *Queries) UpdateMagician(ctx context.Context, arg UpdateMagicianParams) (Magician, error) {
+	row := q.db.QueryRow(ctx, updateMagician,
+		arg.EmailDoUpdate,
+		arg.Email,
+		arg.OriginalNameDoUpdate,
+		arg.OriginalName,
+		arg.MagicNameDoUpdate,
+		arg.MagicName,
+		arg.BirthdayDoUpdate,
+		arg.Birthday,
+		arg.MagicalRatingDoUpdate,
+		arg.MagicalRating,
+		arg.ID,
+	)
 	var i Magician
 	err := row.Scan(
 		&i.ID,

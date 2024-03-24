@@ -98,3 +98,43 @@ func (q *Queries) GetUserSpellBooks(ctx context.Context, owner pgtype.UUID) ([]B
 	}
 	return items, nil
 }
+
+const updateSpellBook = `-- name: UpdateSpellBook :one
+UPDATE books
+SET 
+  name = CASE WHEN $1::boolean
+  THEN $2::text ELSE name END,
+  
+  owner = CASE WHEN $3::boolean
+  THEN $4::uuid ELSE owner END
+WHERE  
+  id = $5 
+RETURNING id, name, owner, updated_at, created_at
+`
+
+type UpdateSpellBookParams struct {
+	NameDoUpdate  bool        `json:"name_do_update"`
+	Name          string      `json:"name"`
+	OwnerDoUpdate bool        `json:"owner_do_update"`
+	Owner         pgtype.UUID `json:"owner"`
+	ID            pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateSpellBook(ctx context.Context, arg UpdateSpellBookParams) (Book, error) {
+	row := q.db.QueryRow(ctx, updateSpellBook,
+		arg.NameDoUpdate,
+		arg.Name,
+		arg.OwnerDoUpdate,
+		arg.Owner,
+		arg.ID,
+	)
+	var i Book
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Owner,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}

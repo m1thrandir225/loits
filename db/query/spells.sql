@@ -23,13 +23,13 @@ WHERE book_id = $1;
 UPDATE spells 
 SET 
   book_id = CASE WHEN @book_id_do_update::boolean
-  THEN @book_id::VARCHAR(200) ELSE book_id END,
+  THEN @book_id::uuid ELSE book_id END,
   
   element = CASE WHEN @element_do_update::boolean
   THEN @element::element ELSE element END,
 
   name = CASE WHEN @name_do_update::boolean
-  THEN @name::VARCHAR(200) ELSE name END
+  THEN @name::text ELSE name END
 WHERE
   id = @id 
 RETURNING *;
