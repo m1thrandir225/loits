@@ -30,6 +30,12 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		/*
+		* Authentication
+		 */
+		v1.POST("/register", server.register)
+		v1.POST("/login", server.login)
+
+		/*
 		* Spells
 		 */
 		v1.GET("/spells/:id", server.getSpellById)
@@ -48,13 +54,12 @@ func (server *Server) setupRouter() {
 		/*
 		 * Magicians
 		 */
-		v1.POST("/register", server.register)
-		v1.POST("/login", server.login)
 
 		v1.GET("/magician/:id", server.getMagician)
 		v1.PUT("/magician/:id", server.updateMagician)
 		v1.DELETE("/magician/:id", server.deleteMagician)
 	}
+
 	server.router = router
 }
 

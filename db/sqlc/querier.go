@@ -21,14 +21,11 @@ type Querier interface {
 	GetMagicianById(ctx context.Context, id pgtype.UUID) (Magician, error)
 	GetSpellBookById(ctx context.Context, id pgtype.UUID) (Book, error)
 	GetSpellById(ctx context.Context, id pgtype.UUID) (Spell, error)
-	GetSpellByName(ctx context.Context, name string) (Spell, error)
 	GetSpellsByBook(ctx context.Context, bookID pgtype.UUID) ([]Spell, error)
 	GetUserSpellBooks(ctx context.Context, owner pgtype.UUID) ([]Book, error)
-	MoveToNewBook(ctx context.Context, arg MoveToNewBookParams) (Spell, error)
 	UpdateMagicalRating(ctx context.Context, arg UpdateMagicalRatingParams) (Magician, error)
 	UpdatePassword(ctx context.Context, arg UpdatePasswordParams) (Magician, error)
 	UpdateSpell(ctx context.Context, arg UpdateSpellParams) (Spell, error)
-	UpdateSpellElement(ctx context.Context, arg UpdateSpellElementParams) (Spell, error)
 }
 
 var _ Querier = (*Queries)(nil)

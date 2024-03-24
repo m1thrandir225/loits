@@ -74,26 +74,6 @@ func (q *Queries) GetSpellById(ctx context.Context, id pgtype.UUID) (Spell, erro
 	return i, err
 }
 
-const getSpellByName = `-- name: GetSpellByName :one
-SELECT id, name, element, book_id, updated_at, created_at
-FROM spells
-WHERE name = $1 LIMIT 1
-`
-
-func (q *Queries) GetSpellByName(ctx context.Context, name string) (Spell, error) {
-	row := q.db.QueryRow(ctx, getSpellByName, name)
-	var i Spell
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Element,
-		&i.BookID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const getSpellsByBook = `-- name: GetSpellsByBook :many
 SELECT id, name, element, book_id, updated_at, created_at
 FROM spells
@@ -127,72 +107,42 @@ func (q *Queries) GetSpellsByBook(ctx context.Context, bookID pgtype.UUID) ([]Sp
 	return items, nil
 }
 
-const moveToNewBook = `-- name: MoveToNewBook :one
-UPDATE spells
-SET book_id = $2
-WHERE id = $1
-RETURNING id, name, element, book_id, updated_at, created_at
-`
-
-type MoveToNewBookParams struct {
-	ID     pgtype.UUID `json:"id"`
-	BookID pgtype.UUID `json:"book_id"`
-}
-
-func (q *Queries) MoveToNewBook(ctx context.Context, arg MoveToNewBookParams) (Spell, error) {
-	row := q.db.QueryRow(ctx, moveToNewBook, arg.ID, arg.BookID)
-	var i Spell
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Element,
-		&i.BookID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const updateSpell = `-- name: UpdateSpell :one
-UPDATE spells
-SET name = $2
-WHERE id = $1
+UPDATE spells 
+SET 
+  book_id = CASE WHEN $1::boolean
+  THEN $2::VARCHAR(200) ELSE book_id END,
+  
+  element = CASE WHEN $3::boolean
+  THEN $4::element ELSE element END,
+
+  name = CASE WHEN $5::boolean
+  THEN $6::VARCHAR(200) ELSE name END
+WHERE
+  id = $7 
 RETURNING id, name, element, book_id, updated_at, created_at
 `
 
 type UpdateSpellParams struct {
-	ID   pgtype.UUID `json:"id"`
-	Name string      `json:"name"`
+	BookIDDoUpdate  bool        `json:"book_id_do_update"`
+	BookID          string      `json:"book_id"`
+	ElementDoUpdate bool        `json:"element_do_update"`
+	Element         Element     `json:"element"`
+	NameDoUpdate    bool        `json:"name_do_update"`
+	Name            string      `json:"name"`
+	ID              pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateSpell(ctx context.Context, arg UpdateSpellParams) (Spell, error) {
-	row := q.db.QueryRow(ctx, updateSpell, arg.ID, arg.Name)
-	var i Spell
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Element,
-		&i.BookID,
-		&i.UpdatedAt,
-		&i.CreatedAt,
+	row := q.db.QueryRow(ctx, updateSpell,
+		arg.BookIDDoUpdate,
+		arg.BookID,
+		arg.ElementDoUpdate,
+		arg.Element,
+		arg.NameDoUpdate,
+		arg.Name,
+		arg.ID,
 	)
-	return i, err
-}
-
-const updateSpellElement = `-- name: UpdateSpellElement :one
-UPDATE spells
-SET element = $2
-WHERE id = $1
-RETURNING id, name, element, book_id, updated_at, created_at
-`
-
-type UpdateSpellElementParams struct {
-	ID      pgtype.UUID `json:"id"`
-	Element Element     `json:"element"`
-}
-
-func (q *Queries) UpdateSpellElement(ctx context.Context, arg UpdateSpellElementParams) (Spell, error) {
-	row := q.db.QueryRow(ctx, updateSpellElement, arg.ID, arg.Element)
 	var i Spell
 	err := row.Scan(
 		&i.ID,

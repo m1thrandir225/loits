@@ -9,11 +9,6 @@ INSERT INTO spells (
   $3
 ) RETURNING *;
 
--- name: GetSpellByName :one
-SELECT *
-FROM spells
-WHERE name = $1 LIMIT 1;
-
 -- name: GetSpellById :one
 SELECT *
 FROM spells
@@ -24,22 +19,19 @@ SELECT *
 FROM spells
 WHERE book_id = $1;
 
--- name: MoveToNewBook :one
-UPDATE spells
-SET book_id = $2
-WHERE id = $1
-RETURNING *;
+-- name: UpdateSpell :one 
+UPDATE spells 
+SET 
+  book_id = CASE WHEN @book_id_do_update::boolean
+  THEN @book_id::VARCHAR(200) ELSE book_id END,
+  
+  element = CASE WHEN @element_do_update::boolean
+  THEN @element::element ELSE element END,
 
--- name: UpdateSpellElement :one
-UPDATE spells
-SET element = $2
-WHERE id = $1
-RETURNING *;
-
--- name: UpdateSpell :one
-UPDATE spells
-SET name = $2
-WHERE id = $1
+  name = CASE WHEN @name_do_update::boolean
+  THEN @name::VARCHAR(200) ELSE name END
+WHERE
+  id = @id 
 RETURNING *;
 
 -- name: DeleteSpell :exec
