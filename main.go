@@ -6,8 +6,6 @@ import (
 	db "m1thrandir225/loits/db/sqlc"
 	"m1thrandir225/loits/util"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -16,12 +14,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	pgxUUID "github.com/vgarvardt/pgx-google-uuid/v5"
 )
-
-var interruptSignals = []os.Signal{
-	os.Interrupt,
-	syscall.SIGTERM,
-	syscall.SIGINT,
-}
 
 func main() {
 
@@ -34,11 +26,7 @@ func main() {
 	if config.Environment == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
-	defer stop()
-
-	connPool, err := pgxpool.New(ctx, config.DBSource)
+	connPool, err := pgxpool.New(context.Background(), config.DBSource)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot connect to db")
 	}
@@ -50,18 +38,7 @@ func main() {
 
 	store := db.NewStore(connPool)
 
-	server, err := api.NewServer(config, store)
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot create server")
-	}
-
-	err = server.Start(config.HTTPServerAddress)
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot start server")
-	}
-	//runGinServer(config, store)
+	runGinServer(config, store)
 }
 
 func runGinServer(config util.Config, store db.Store) {
