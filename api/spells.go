@@ -96,27 +96,6 @@ func (server *Server) getSpellById(ctx *gin.Context) {
 }
 
 /**
-* GET /spells/{name}/
- */
-func (server *Server) getSpellByName(ctx *gin.Context) {
-	var req getSpellByNameRequest
-
-	if err := ctx.BindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	spell, err := server.store.GetSpellByName(ctx, req.Name)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, spell)
-}
-
-/**
 * GET /spells/{book_id}
  */
 func (server *Server) getSpellsByBook(ctx *gin.Context) {
@@ -137,87 +116,7 @@ func (server *Server) getSpellsByBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, spells)
 }
 
-/**
-* PUT /spells/{id}/{book_id}
- */
-func (server *Server) moveSpellToNewBook(ctx *gin.Context) {
-	var req moveSpellToNewBookRequest
-
-	if err := ctx.BindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-
-		return
-	}
-
-	arg := db.MoveToNewBookParams{
-		ID:     req.ID,
-		BookID: req.BookID,
-	}
-
-	movedSpell, err := server.store.MoveToNewBook(ctx, arg)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, movedSpell)
-}
-
-/**
-* PUT /spells/{id}/{element}
- */
-func (server *Server) updateSpellElement(ctx *gin.Context) {
-	var req updateSpellElementRequest
-
-	if err := ctx.BindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-
-		return
-	}
-
-	arg := db.UpdateSpellElementParams{
-		ID:      req.ID,
-		Element: req.Element,
-	}
-
-	updatedSpell, err := server.store.UpdateSpellElement(ctx, arg)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, updatedSpell)
-}
-
-/**
-* PUT /spells/{id}/{name}
- */
-
-func (server *Server) updateSpellName(ctx *gin.Context) {
-	var req updateSpellNameRequest
-
-	if err := ctx.BindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-
-		return
-	}
-
-	arg := db.UpdateSpellParams{
-		ID:   req.ID,
-		Name: req.Name,
-	}
-
-	updatedSpell, err := server.store.UpdateSpell(ctx, arg)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, updatedSpell)
-}
+//TODO: implement updateSpell
 
 /**
 * DELETE /spells/{id}

@@ -24,7 +24,6 @@ SELECT *
 FROM magicians
 WHERE id = $1 LIMIT 1;
 
-
 -- name: UpdateMagician :one
 UPDATE magicians
 SET 

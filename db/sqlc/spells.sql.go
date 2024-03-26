@@ -114,7 +114,7 @@ SET
   THEN $2::uuid ELSE book_id END,
   
   element = CASE WHEN $3::boolean
-  THEN $4::element ELSE element END,
+  THEN cast($4 as "element")ELSE element END,
 
   name = CASE WHEN $5::boolean
   THEN $6::text ELSE name END

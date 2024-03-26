@@ -2,6 +2,7 @@ package db_test
 
 import (
 	"context"
+	"log"
 	db "m1thrandir225/loits/db/sqlc"
 	"m1thrandir225/loits/util"
 	"testing"
@@ -37,25 +38,6 @@ func TestCreateSpell(t *testing.T) {
 	book := createRandomSpellBook(t, owner)
 
 	createRandomSpell(t, book)
-}
-
-func TestGetSpellByName(t *testing.T) {
-	owner := createRandomMagician(t)
-	book := createRandomSpellBook(t, owner)
-
-	initialSpell := createRandomSpell(t, book)
-
-	spell, err := testStore.GetSpellByName(context.Background(), initialSpell.Name)
-
-	require.NoError(t, err)
-
-	require.Equal(t, spell.ID, initialSpell.ID)
-	require.Equal(t, spell.Name, initialSpell.Name)
-	require.Equal(t, spell.BookID, initialSpell.BookID)
-	require.Equal(t, spell.Element, initialSpell.Element)
-
-	require.WithinDuration(t, spell.CreatedAt, initialSpell.CreatedAt, time.Second)
-	require.WithinDuration(t, spell.UpdatedAt, initialSpell.UpdatedAt, time.Second)
 }
 
 func TestGetSpellById(t *testing.T) {
@@ -101,31 +83,36 @@ func TestGetSpellsByBook(t *testing.T) {
 
 }
 
-func TestMoveToNewBook(t *testing.T) {
+func TestUpdateBookId(t *testing.T) {
 	owner := createRandomMagician(t)
 
 	book := createRandomSpellBook(t, owner)
 
-	spell := createRandomSpell(t, book)
+	initialSpell := createRandomSpell(t, book)
 
 	newBook := createRandomSpellBook(t, owner)
 
-	arg := db.MoveToNewBookParams{
-		ID:     spell.ID,
-		BookID: newBook.ID,
+	arg := db.UpdateSpellParams{
+		BookIDDoUpdate:  true,
+		BookID:          newBook.ID,
+		ID:              initialSpell.ID,
+		ElementDoUpdate: false,
+		NameDoUpdate:    false,
 	}
 
-	movedSpell, err := testStore.MoveToNewBook(context.Background(), arg)
+	updatedSpell, err := testStore.UpdateSpell(context.Background(), arg)
 
+	log.Fatal(updatedSpell.Element)
 	require.NoError(t, err)
 
-	require.Equal(t, spell.ID, movedSpell.ID)
-	require.Equal(t, spell.Name, movedSpell.Name)
-	require.Equal(t, spell.Element, movedSpell.Element)
-	require.Equal(t, movedSpell.BookID, newBook.ID)
+	require.Equal(t, initialSpell.ID, updatedSpell.ID)
+	require.Equal(t, initialSpell.Name, updatedSpell.Name)
+	require.Equal(t, initialSpell.Element, updatedSpell.Element)
+	require.WithinDuration(t, initialSpell.CreatedAt, updatedSpell.CreatedAt, time.Second)
+	require.WithinDuration(t, initialSpell.UpdatedAt, updatedSpell.UpdatedAt, time.Second)
 
-	require.WithinDuration(t, spell.CreatedAt, movedSpell.CreatedAt, time.Second)
-	require.WithinDuration(t, spell.UpdatedAt, movedSpell.UpdatedAt, time.Second)
+	require.NotEqual(t, book.ID, updatedSpell.BookID)
+	require.Equal(t, newBook.ID, updatedSpell.BookID)
 }
 
 func TestUpdateSpellElement(t *testing.T) {
@@ -135,21 +122,26 @@ func TestUpdateSpellElement(t *testing.T) {
 
 	initialSpell := createRandomSpell(t, book)
 
-	arg := db.UpdateSpellElementParams{
-		ID:      initialSpell.ID,
-		Element: util.RandomElement(),
+	newElement := util.RandomElement()
+
+	arg := db.UpdateSpellParams{
+		ElementDoUpdate: true,
+		Element:         db.Element(newElement),
+		ID:              initialSpell.ID,
 	}
 
-	updatedSpell, err := testStore.UpdateSpellElement(context.Background(), arg)
+	updatedSpell, err := testStore.UpdateSpell(context.Background(), arg)
 
 	require.NoError(t, err)
 
-	require.Equal(t, updatedSpell.ID, initialSpell.ID)
-	require.NotEqual(t, updatedSpell.Element, initialSpell.Element)
-	require.Equal(t, updatedSpell.Name, initialSpell.Name)
-	require.Equal(t, updatedSpell.BookID, initialSpell.BookID)
-	require.WithinDuration(t, updatedSpell.CreatedAt, initialSpell.CreatedAt, time.Second)
-	require.WithinDuration(t, updatedSpell.UpdatedAt, initialSpell.UpdatedAt, time.Second)
+	require.Equal(t, initialSpell.ID, updatedSpell.ID)
+	require.Equal(t, initialSpell.Name, updatedSpell.Name)
+	require.Equal(t, initialSpell.BookID, updatedSpell.BookID)
+	require.WithinDuration(t, initialSpell.CreatedAt, updatedSpell.CreatedAt, time.Second)
+	require.WithinDuration(t, initialSpell.UpdatedAt, updatedSpell.UpdatedAt, time.Second)
+
+	require.NotEqual(t, initialSpell.Element, updatedSpell.Element)
+	require.Equal(t, newElement, updatedSpell.Element)
 }
 
 func TestUpdateSpellName(t *testing.T) {
@@ -159,21 +151,27 @@ func TestUpdateSpellName(t *testing.T) {
 
 	initialSpell := createRandomSpell(t, book)
 
+	newName := util.RandomString(6)
+
 	arg := db.UpdateSpellParams{
-		ID:   initialSpell.ID,
-		Name: util.RandomString(6),
+		NameDoUpdate:    true,
+		Name:            newName,
+		ElementDoUpdate: false,
+		ID:              initialSpell.ID,
 	}
 
 	updatedSpell, err := testStore.UpdateSpell(context.Background(), arg)
 
 	require.NoError(t, err)
 
-	require.Equal(t, updatedSpell.ID, initialSpell.ID)
-	require.Equal(t, updatedSpell.Element, initialSpell.Element)
-	require.NotEqual(t, updatedSpell.Name, initialSpell.Name)
-	require.Equal(t, updatedSpell.BookID, initialSpell.BookID)
-	require.WithinDuration(t, updatedSpell.CreatedAt, initialSpell.CreatedAt, time.Second)
-	require.WithinDuration(t, updatedSpell.UpdatedAt, initialSpell.UpdatedAt, time.Second)
+	require.Equal(t, initialSpell.ID, updatedSpell.ID)
+	require.Equal(t, initialSpell.Element, updatedSpell.Element)
+	require.Equal(t, initialSpell.BookID, updatedSpell.BookID)
+	require.WithinDuration(t, initialSpell.CreatedAt, updatedSpell.CreatedAt, time.Second)
+	require.WithinDuration(t, initialSpell.UpdatedAt, updatedSpell.UpdatedAt, time.Second)
+
+	require.NotEqual(t, initialSpell.Name, updatedSpell.Name)
+	require.Equal(t, newName, updatedSpell.Name)
 }
 
 func TestDeleteSpell(t *testing.T) {

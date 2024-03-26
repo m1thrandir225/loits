@@ -26,7 +26,7 @@ SET
   THEN @book_id::uuid ELSE book_id END,
   
   element = CASE WHEN @element_do_update::boolean
-  THEN @element::element ELSE element END,
+  THEN cast(@element as "element")ELSE element END,
 
   name = CASE WHEN @name_do_update::boolean
   THEN @name::text ELSE name END
