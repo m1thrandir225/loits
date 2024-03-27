@@ -37,10 +37,10 @@ SET
   THEN @magic_name::text ELSE magic_name END,
 
   birthday = CASE WHEN @birthday_do_update::boolean
-  THEN @birthday::timestamptz ELSE birthday END,
+  THEN  cast(@birthday as "timestamptz") ELSE birthday END,
 
   magical_rating = CASE WHEN @magical_rating_do_update::boolean
-  THEN @magical_rating::magical_rating ELSE magical_rating END
+  THEN cast(@magical_rating as "magic_rating") ELSE magical_rating END
 WHERE 
   id = @id 
 RETURNING *;

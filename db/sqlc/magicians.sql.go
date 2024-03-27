@@ -133,10 +133,10 @@ SET
   THEN $6::text ELSE magic_name END,
 
   birthday = CASE WHEN $7::boolean
-  THEN $8::timestamptz ELSE birthday END,
+  THEN  cast($8 as "timestamptz") ELSE birthday END,
 
   magical_rating = CASE WHEN $9::boolean
-  THEN $10::magical_rating ELSE magical_rating END
+  THEN cast($10 as "magic_rating") ELSE magical_rating END
 WHERE 
   id = $11 
 RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
@@ -152,7 +152,7 @@ type UpdateMagicianParams struct {
 	BirthdayDoUpdate      bool        `json:"birthday_do_update"`
 	Birthday              time.Time   `json:"birthday"`
 	MagicalRatingDoUpdate bool        `json:"magical_rating_do_update"`
-	MagicalRating         interface{} `json:"magical_rating"`
+	MagicalRating         MagicRating `json:"magical_rating"`
 	ID                    pgtype.UUID `json:"id"`
 }
 
