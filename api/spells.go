@@ -169,7 +169,6 @@ func (server *Server) updateSpellElement(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, spell)
-
 }
 
 /**
