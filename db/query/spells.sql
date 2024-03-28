@@ -25,13 +25,17 @@ SET
   book_id = CASE WHEN @book_id_do_update::boolean
   THEN @book_id::uuid ELSE book_id END,
   
-  element = CASE WHEN @element_do_update::boolean
-  THEN cast(@element as "element")ELSE element END,
-
   name = CASE WHEN @name_do_update::boolean
   THEN @name::text ELSE name END
 WHERE
   id = @id 
+RETURNING *;
+
+-- name: UpdateSpellElement :one
+
+UPDATE spells
+SET element = $2
+WHERE id = $1
 RETURNING *;
 
 -- name: DeleteSpell :exec

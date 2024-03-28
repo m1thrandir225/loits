@@ -37,12 +37,15 @@ SET
   THEN @magic_name::text ELSE magic_name END,
 
   birthday = CASE WHEN @birthday_do_update::boolean
-  THEN  cast(@birthday as "timestamptz") ELSE birthday END,
-
-  magical_rating = CASE WHEN @magical_rating_do_update::boolean
-  THEN cast(@magical_rating as "magic_rating") ELSE magical_rating END
+  THEN  cast(@birthday as "timestamptz") ELSE birthday END
 WHERE 
   id = @id 
+RETURNING *;
+
+-- name: UpdateMagicianRatin :one 
+UPDATE magicians
+SET magical_rating = $2
+WHERE id = $1
 RETURNING *;
 
 -- name: UpdatePassword :one

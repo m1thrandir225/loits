@@ -20,11 +20,12 @@ func createRandomMagician(t *testing.T) db.Magician {
 	arg := db.CreateMagicianParams{
 		Email:         util.RandomEmail(),
 		Password:      hashedPassword,
-		MagicName:     util.RandomOwner(),
-		OriginalName:  util.RandomOwner(),
-		MagicalRating: db.MagicRating(util.RandomMagicRating()),
+		MagicName:     util.RandomMagicianName(),
+		OriginalName:  util.RandomMagicianName(),
+		MagicalRating: util.RandomMagicRating(),
 		Birthday:      util.RandomDate(),
 	}
+
 	magician, err := testStore.CreateMagician(context.Background(), arg)
 
 	require.NoError(t, err)
@@ -67,15 +68,14 @@ func TestGetMagicianByEmail(t *testing.T) {
 func TestUpdateMagicianRating(t *testing.T) {
 	initialMagician := createRandomMagician(t)
 
-	newMagicalRating := util.RandomMagicRating()
+	newMagicalRating := util.RandomMagicalRatingButNotGiven(initialMagician.MagicalRating)
 
-	arg := db.UpdateMagicianParams{
+	arg := db.UpdateMagicianRatinParams{
 		ID:                    initialMagician.ID,
-		MagicalRatingDoUpdate: true,
 		MagicalRating:         db.MagicRating(newMagicalRating),
 	}
 
-	magician, err := testStore.UpdateMagician(context.Background(), arg)
+	magician, err := testStore.UpdateMagicianRatin(context.Background(), arg)
 
 	require.NoError(t, err)
 
@@ -84,22 +84,24 @@ func TestUpdateMagicianRating(t *testing.T) {
 	require.Equal(t, initialMagician.Password, magician.Password)
 	require.Equal(t, initialMagician.MagicName, magician.MagicName)
 	require.Equal(t, initialMagician.OriginalName, magician.OriginalName)
-	require.NotEqual(t, initialMagician.MagicalRating, magician.MagicalRating)
 	require.Equal(t, db.MagicRating(newMagicalRating), magician.MagicalRating)
 	require.WithinDuration(t, initialMagician.Birthday, magician.Birthday, time.Second)
 	require.WithinDuration(t, initialMagician.CreatedAt, magician.CreatedAt, time.Second)
 	require.WithinDuration(t, initialMagician.UpdatedAt, magician.UpdatedAt, time.Second)
 }
 
-func TestUpdateEmai(t *testing.T) {
+func TestUpdateEmail(t *testing.T) {
 	initialMagician := createRandomMagician(t)
 
 	newEmail := util.RandomEmail()
 
 	arg := db.UpdateMagicianParams{
-		ID:            initialMagician.ID,
-		EmailDoUpdate: true,
-		Email:         newEmail,
+		BirthdayDoUpdate:      false,
+		OriginalNameDoUpdate:  false,
+		MagicNameDoUpdate:     false,
+		ID:                    initialMagician.ID,
+		EmailDoUpdate:         true,
+		Email:                 newEmail,
 	}
 
 	magician, err := testStore.UpdateMagician(context.Background(), arg)

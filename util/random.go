@@ -33,13 +33,8 @@ func RandomString(n int) string {
 }
 
 // RandomMagicianName - generate a random magician name
-func RandomOwner() string {
+func RandomMagicianName() string {
 	return RandomString(6)
-}
-
-// RandomMoney generates a random amount of money
-func RandomMoney() int64 {
-	return RandomInt(0, 1000)
 }
 
 func RandomElement() db.Element {
@@ -54,14 +49,39 @@ func RandomElement() db.Element {
 	return elements[rand.Intn(n)]
 }
 
-func RandomMagicRating() string {
-	ratings := []string{
-		"S", "A", "B", "C", "D", "F",
+func RandomElementButNotGiven(givenElement db.Element) db.Element {
+	element := RandomElement()
+
+	if element == givenElement {
+		return RandomElementButNotGiven(givenElement)
+	}
+
+	return element
+}
+
+func RandomMagicRating() db.MagicRating {
+	ratings := []db.MagicRating{
+		db.MagicRatingS,
+		db.MagicRatingA,
+		db.MagicRatingB,
+		db.MagicRatingC,
+		db.MagicRatingD,
+		db.MagicRatingF,
 	}
 
 	n := len(ratings)
 
 	return ratings[rand.Intn(n)]
+}
+
+func RandomMagicalRatingButNotGiven(givenRating db.MagicRating) db.MagicRating {
+	rating := RandomMagicRating()
+
+	if rating == givenRating {
+		return RandomMagicalRatingButNotGiven(givenRating)
+	}
+
+	return rating
 }
 
 func RandomEmail() string {

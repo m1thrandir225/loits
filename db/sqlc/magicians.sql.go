@@ -133,27 +133,22 @@ SET
   THEN $6::text ELSE magic_name END,
 
   birthday = CASE WHEN $7::boolean
-  THEN  cast($8 as "timestamptz") ELSE birthday END,
-
-  magical_rating = CASE WHEN $9::boolean
-  THEN cast($10 as "magic_rating") ELSE magical_rating END
+  THEN  cast($8 as "timestamptz") ELSE birthday END
 WHERE 
-  id = $11 
+  id = $9 
 RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
 `
 
 type UpdateMagicianParams struct {
-	EmailDoUpdate         bool        `json:"email_do_update"`
-	Email                 string      `json:"email"`
-	OriginalNameDoUpdate  bool        `json:"original_name_do_update"`
-	OriginalName          string      `json:"original_name"`
-	MagicNameDoUpdate     bool        `json:"magic_name_do_update"`
-	MagicName             string      `json:"magic_name"`
-	BirthdayDoUpdate      bool        `json:"birthday_do_update"`
-	Birthday              time.Time   `json:"birthday"`
-	MagicalRatingDoUpdate bool        `json:"magical_rating_do_update"`
-	MagicalRating         MagicRating `json:"magical_rating"`
-	ID                    pgtype.UUID `json:"id"`
+	EmailDoUpdate        bool        `json:"email_do_update"`
+	Email                string      `json:"email"`
+	OriginalNameDoUpdate bool        `json:"original_name_do_update"`
+	OriginalName         string      `json:"original_name"`
+	MagicNameDoUpdate    bool        `json:"magic_name_do_update"`
+	MagicName            string      `json:"magic_name"`
+	BirthdayDoUpdate     bool        `json:"birthday_do_update"`
+	Birthday             time.Time   `json:"birthday"`
+	ID                   pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateMagician(ctx context.Context, arg UpdateMagicianParams) (Magician, error) {
@@ -166,10 +161,37 @@ func (q *Queries) UpdateMagician(ctx context.Context, arg UpdateMagicianParams) 
 		arg.MagicName,
 		arg.BirthdayDoUpdate,
 		arg.Birthday,
-		arg.MagicalRatingDoUpdate,
-		arg.MagicalRating,
 		arg.ID,
 	)
+	var i Magician
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Password,
+		&i.OriginalName,
+		&i.MagicName,
+		&i.Birthday,
+		&i.MagicalRating,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateMagicianRatin = `-- name: UpdateMagicianRatin :one
+UPDATE magicians
+SET magical_rating = $2
+WHERE id = $1
+RETURNING id, email, password, original_name, magic_name, birthday, magical_rating, updated_at, created_at
+`
+
+type UpdateMagicianRatinParams struct {
+	ID            pgtype.UUID `json:"id"`
+	MagicalRating MagicRating `json:"magical_rating"`
+}
+
+func (q *Queries) UpdateMagicianRatin(ctx context.Context, arg UpdateMagicianRatinParams) (Magician, error) {
+	row := q.db.QueryRow(ctx, updateMagicianRatin, arg.ID, arg.MagicalRating)
 	var i Magician
 	err := row.Scan(
 		&i.ID,

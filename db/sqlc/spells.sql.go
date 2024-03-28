@@ -113,36 +113,56 @@ SET
   book_id = CASE WHEN $1::boolean
   THEN $2::uuid ELSE book_id END,
   
-  element = CASE WHEN $3::boolean
-  THEN cast($4 as "element")ELSE element END,
-
-  name = CASE WHEN $5::boolean
-  THEN $6::text ELSE name END
+  name = CASE WHEN $3::boolean
+  THEN $4::text ELSE name END
 WHERE
-  id = $7 
+  id = $5 
 RETURNING id, name, element, book_id, updated_at, created_at
 `
 
 type UpdateSpellParams struct {
-	BookIDDoUpdate  bool        `json:"book_id_do_update"`
-	BookID          pgtype.UUID `json:"book_id"`
-	ElementDoUpdate bool        `json:"element_do_update"`
-	Element         Element     `json:"element"`
-	NameDoUpdate    bool        `json:"name_do_update"`
-	Name            string      `json:"name"`
-	ID              pgtype.UUID `json:"id"`
+	BookIDDoUpdate bool        `json:"book_id_do_update"`
+	BookID         pgtype.UUID `json:"book_id"`
+	NameDoUpdate   bool        `json:"name_do_update"`
+	Name           string      `json:"name"`
+	ID             pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateSpell(ctx context.Context, arg UpdateSpellParams) (Spell, error) {
 	row := q.db.QueryRow(ctx, updateSpell,
 		arg.BookIDDoUpdate,
 		arg.BookID,
-		arg.ElementDoUpdate,
-		arg.Element,
 		arg.NameDoUpdate,
 		arg.Name,
 		arg.ID,
 	)
+	var i Spell
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Element,
+		&i.BookID,
+		&i.UpdatedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateSpellElement = `-- name: UpdateSpellElement :one
+
+UPDATE spells
+SET element = $2
+WHERE id = $1
+RETURNING id, name, element, book_id, updated_at, created_at
+`
+
+type UpdateSpellElementParams struct {
+	ID      pgtype.UUID `json:"id"`
+	Element Element     `json:"element"`
+}
+
+func (q *Queries) UpdateSpellElement(ctx context.Context, arg UpdateSpellElementParams) (Spell, error) {
+	row := q.db.QueryRow(ctx, updateSpellElement, arg.ID, arg.Element)
 	var i Spell
 	err := row.Scan(
 		&i.ID,

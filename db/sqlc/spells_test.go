@@ -2,7 +2,6 @@ package db_test
 
 import (
 	"context"
-	"log"
 	db "m1thrandir225/loits/db/sqlc"
 	"m1thrandir225/loits/util"
 	"testing"
@@ -96,13 +95,11 @@ func TestUpdateBookId(t *testing.T) {
 		BookIDDoUpdate:  true,
 		BookID:          newBook.ID,
 		ID:              initialSpell.ID,
-		ElementDoUpdate: false,
 		NameDoUpdate:    false,
 	}
 
 	updatedSpell, err := testStore.UpdateSpell(context.Background(), arg)
 
-	log.Fatal(updatedSpell.Element)
 	require.NoError(t, err)
 
 	require.Equal(t, initialSpell.ID, updatedSpell.ID)
@@ -122,15 +119,14 @@ func TestUpdateSpellElement(t *testing.T) {
 
 	initialSpell := createRandomSpell(t, book)
 
-	newElement := util.RandomElement()
+	newElement := util.RandomElementButNotGiven(initialSpell.Element)
 
-	arg := db.UpdateSpellParams{
-		ElementDoUpdate: true,
+	arg := db.UpdateSpellElementParams{
 		Element:         db.Element(newElement),
 		ID:              initialSpell.ID,
 	}
 
-	updatedSpell, err := testStore.UpdateSpell(context.Background(), arg)
+	updatedSpell, err := testStore.UpdateSpellElement(context.Background(), arg)
 
 	require.NoError(t, err)
 
@@ -156,7 +152,6 @@ func TestUpdateSpellName(t *testing.T) {
 	arg := db.UpdateSpellParams{
 		NameDoUpdate:    true,
 		Name:            newName,
-		ElementDoUpdate: false,
 		ID:              initialSpell.ID,
 	}
 
