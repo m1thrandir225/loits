@@ -60,10 +60,11 @@ func (server *Server) getSpellBookById(ctx *gin.Context) {
 	}
 }
 
+
+
 /**
 * GET /magician/{user_id}/books
  */
-
 func (server *Server) getUserSpellBooks(ctx *gin.Context) {
 	var req getUserSpellBooksRequest
 

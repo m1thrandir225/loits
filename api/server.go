@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	db "m1thrandir225/loits/db/sqlc"
 	"m1thrandir225/loits/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
@@ -29,35 +30,38 @@ func (server *Server) setupRouter() {
 
 	v1 := router.Group("/api/v1")
 	{
-		/*
+		/**
 		* Authentication
-		 */
+		*/
 		v1.POST("/register", server.register)
 		v1.POST("/login", server.login)
+		v1.POST("/change-password", server.changePassword)
 
-		/*
+		/**
 		* Spells
-		 */
+		*/
 		v1.GET("/spells/:id", server.getSpellById)
 		v1.POST("/spells/", server.createSpell)
-		//v1.PUT("/spells/:id", server.updateSpell)
+		v1.PUT("/spells/:id", server.updateSpell)
+		v1.PUT("/spells/:id/move", server.updateSpellElement)
 		v1.DELETE("/spells/:id", server.deleteSpell)
 
-		/*
+		/**
 		* Spell Books
-		 */
+		*/
 		v1.POST("/books/", server.createSpellBook)
 		v1.GET("/books/:id", server.getSpellBookById)
 		v1.GET("/books/:id/spells", server.getSpellsByBook)
 		v1.DELETE("/books/:id", server.deleteSpellBook)
 
-		/*
-		 * Magicians
-		 */
-
+		/**
+		* Magicians
+		*/
 		v1.GET("/magician/:id", server.getMagician)
 		v1.PUT("/magician/:id", server.updateMagician)
+		v1.PUT("/magician/:id/magic-rating", server.updateMagicianMagicRating)
 		v1.DELETE("/magician/:id", server.deleteMagician)
+		v1.GET("/magician/:id/books", server.getUserSpellBooks)
 	}
 
 	server.router = router

@@ -14,10 +14,6 @@ type createSpellRequest struct {
 	BookID  pgtype.UUID `json:"book_id" binding:"required"`
 }
 
-type getSpellByNameRequest struct {
-	Name string `uri:"name" binding:"required,min=1"`
-}
-
 type getSpellByIdRequest struct {
 	ID pgtype.UUID `uri:"id" binding:"required,min=1"`
 }
@@ -26,30 +22,26 @@ type getSpellsByBookRequest struct {
 	BookID pgtype.UUID `uri:"id" binding:"required,min=1"`
 }
 
-type getSpellsByBookResponse struct {
-	Spells []db.Spell
-}
-
-type moveSpellToNewBookRequest struct {
-	ID     pgtype.UUID `uri:"id" binding:"required"`
-	BookID pgtype.UUID `uri:"book_id" binding:"required"`
-}
 
 type updateSpellElementRequest struct {
 	ID      pgtype.UUID `uri:"id" binding:"required"`
 	Element db.Element  `uri:"element" binding:"required"`
 }
 
-type updateSpellNameRequest struct {
-	ID   pgtype.UUID `uri:"id" binding:"required"`
-	Name string      `uri:"name" binding:"required"`
+type updateSpellRequest struct {
+	ID      pgtype.UUID `uri:"id" binding:"required"`
+	Name    string      `json:"name"`
+	NameDoUpdate bool    `json:"name_do_update"`
+	BookID pgtype.UUID `json:"book_id"`
+	BookIDDoUpdate bool `json:"book_id_do_update"`
 }
+
 
 /**
 * POST /spells/
  */
 
-func (server *Server) createSpell(ctx *gin.Context) {
+ func (server *Server) createSpell(ctx *gin.Context) {
 	var req createSpellRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -71,7 +63,6 @@ func (server *Server) createSpell(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, spell)
 }
-
 /**
 * GET /spells/{id}/
  */
@@ -94,7 +85,6 @@ func (server *Server) getSpellById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, spell)
 
 }
-
 /**
 * GET /spells/{book_id}
  */
@@ -116,7 +106,71 @@ func (server *Server) getSpellsByBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, spells)
 }
 
-//TODO: implement updateSpell
+
+/**
+* POST /spells/{id}
+ */
+
+ func (server *Server) updateSpell(ctx *gin.Context) {
+	var uriBind getSpellByIdRequest
+	var req updateSpellRequest
+
+	if err := ctx.ShouldBindUri(&uriBind); err != nil { 
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.UpdateSpellParams{
+		ID: uriBind.ID,
+		Name:    req.Name,
+		BookIDDoUpdate: req.BookIDDoUpdate,
+		NameDoUpdate: req.NameDoUpdate,
+		BookID:  req.BookID,
+	}
+
+	spell, err := server.store.UpdateSpell(ctx, arg)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, spell)
+}
+
+/**
+* POST /spells/{id}/element
+*/
+func (server *Server) updateSpellElement(ctx *gin.Context) {
+	var uriBind getSpellByIdRequest
+	var req updateSpellElementRequest
+
+	if err := ctx.ShouldBindUri(&uriBind); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := db.UpdateSpellElementParams {
+		Element: db.Element(req.Element),
+		ID: uriBind.ID,
+	}
+
+	spell, err := server.store.UpdateSpellElement(ctx, arg)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, spell)
+
+}
 
 /**
 * DELETE /spells/{id}
