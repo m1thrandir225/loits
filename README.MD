@@ -1,3 +1,5 @@
+![LoitsHeader](./.github/header.png)
+
 # Loits - SpellBook Manager 
 ---
 
