@@ -3,4 +3,4 @@
 # Loits - SpellBook Manager 
 ---
 
-Random Project to try out Go Templates 
+(Work-in-porgress) A simple project with the purpose of exploring HTMX & Templ
