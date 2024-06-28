@@ -1,0 +1,7 @@
+package components;
+
+templ HeaderLink(name , link string, isActive bool) {
+    <a href={ templ.URL(link) } class="text-lg font-normal text-underline text-[#1E1E1E] hover:text-white transition-all ease-in-out duration-100">
+        {name}
+    </a>
+}

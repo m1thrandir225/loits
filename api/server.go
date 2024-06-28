@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
 	db "m1thrandir225/loits/db/sqlc"
@@ -27,16 +28,20 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 		store:  store,
 	}
 
+	engine := gin.Default()
+
+	fmt.Println(engine.Static("/static", "./static"))
+
 	server.setupRouter()
 	return server, nil
 }
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
-
 	router.GET("/html", func(c *gin.Context) {
 		renderTemplate(c, http.StatusOK, templates.HomePage("hello world"))
 	})
+
 	v1 := router.Group("/api/v1")
 	{
 		/**

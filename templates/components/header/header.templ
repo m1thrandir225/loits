@@ -1,0 +1,18 @@
+package components
+
+import "m1thrandir225/loits/templates/components/header-link"
+
+
+templ Header() {
+	<header class="w-full flex">
+		<div class="container mx-auto flex flex-row items-center justify-between">
+			<h1 class="text-xl text-center text-cyan">Loits </h1>
+			<div class="flex flex-row items-center gap-4">
+		        @components.HeaderLink("Home", "/", false)
+		        @components.HeaderLink("Magic Books", "/books", false)
+		        @components.HeaderLink("Spells", "/spells", false)
+		        @components.HeaderLink("Your Profile", "/profile", false)
+			</div>
+		</div>
+	</header>
+}
