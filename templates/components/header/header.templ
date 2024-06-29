@@ -2,16 +2,28 @@ package components
 
 import "m1thrandir225/loits/templates/components/header-link"
 
-templ Header(currentLink string) {
-	<header class="flex w-full py-4">
-		<div class="container flex flex-row items-center justify-between mx-auto">
-			<h1 class="text-[48px] text-center text-cyan font-yung">Loits </h1>
-			<div class="flex flex-row items-center gap-8">
-				@components.HeaderLink("Home", "/", currentLink == "/")
-				@components.HeaderLink("Magic Books", "/books", currentLink == "/books")
-				@components.HeaderLink("Spells", "/spells", currentLink == "/spells")
-				@components.HeaderLink("Your Profile", "/profile", currentLink == "/profile")
+templ Header(currentLink string, isAuthenticated bool) {
+	if isAuthenticated {
+		<header class="flex w-full py-4">
+			<div class="container flex flex-row items-center justify-between mx-auto">
+				<h1 class="text-[48px] text-center text-cyan font-yung">Loits </h1>
+				<div class="flex flex-row items-center gap-8">
+					@components.HeaderLink("Home", "/", currentLink == "/")
+					@components.HeaderLink("Magic Books", "/books", currentLink == "/books")
+					@components.HeaderLink("Spells", "/spells", currentLink == "/spells")
+					@components.HeaderLink("Your Profile", "/profile", currentLink == "/profile")
+				</div>
 			</div>
-		</div>
-	</header>
+		</header>
+	} else {
+		<header class="flex w-full py-4">
+			<div class="container flex flex-row items-center justify-between mx-auto">
+				<h1 class="text-[48px] text-center text-cyan font-yung">Loits </h1>
+				<div class="flex flex-row items-center gap-8">
+					@components.HeaderLink("Login", "/login", currentLink == "/login")
+					@components.HeaderLink("Register", "/register", currentLink == "/register")
+				</div>
+			</div>
+		</header>
+	}
 }

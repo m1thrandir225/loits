@@ -33,10 +33,13 @@ func (server *Server) setupRouter() {
 	/**
 	* HTML Pages
 	*/
-	router.GET("/", server.renderHomepage)
-	router.GET("/profile", server.renderProfilepage)
-	router.GET("/books", server.renderBookspage)
-	router.GET("/spells", server.renderSpellspage)
+	router.GET("/", server.renderHomePage)
+	router.GET("/profile", server.renderProfilePage)
+	router.GET("/books", server.renderBooksPage)
+	router.GET("/spells", server.renderSpellsPage)
+
+	router.GET("/login", server.renderLoginPage)
+	router.GET("/register", server.renderRegisterPage)
 
 	/**
 	* Api Routes

@@ -13,8 +13,9 @@ import "bytes"
 import "m1thrandir225/loits/templates/components/header"
 
 type PageData struct {
-	Title      string
-	ActiveLink string
+	Title           string
+	ActiveLink      string
+	IsAuthenticated bool
 }
 
 func BaseTemplate(showHeader bool, pageData PageData) templ.Component {
@@ -37,7 +38,7 @@ func BaseTemplate(showHeader bool, pageData PageData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(pageData.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layouts/base.templ`, Line: 14, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layouts/base.templ`, Line: 15, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -48,7 +49,7 @@ func BaseTemplate(showHeader bool, pageData PageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if showHeader {
-			templ_7745c5c3_Err = components.Header(pageData.ActiveLink).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Header(pageData.ActiveLink, pageData.IsAuthenticated).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

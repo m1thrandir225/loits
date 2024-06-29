@@ -24,54 +24,113 @@ func renderErrorPage(ctx *gin.Context, errorCode int) {
 }
 
 
-func (server *Server) renderHomepage(ctx *gin.Context) {
+func (server *Server) renderHomePage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
 	pageData := layouts.PageData {
 		Title: "Loits - Home",
 		ActiveLink: "/",
+		IsAuthenticated: true,
 	}
-	err := renderTemplate(ctx, http.StatusOK, pages.HomePage(pageData))
+
+	println(authCookie)
+
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+
+	err = renderTemplate(ctx, http.StatusOK, pages.HomePage(pageData))
 
 	if err != nil {
 		renderErrorPage(ctx, http.StatusNotFound)
 	}
 }
 
-func (server *Server) renderSpellspage(ctx *gin.Context) {
+func (server *Server) renderSpellsPage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
 
 	pageData := layouts.PageData {
-		Title: "Your Spells",
+		Title: "Loits - Your Spells",
 		ActiveLink: "/spells",
+		IsAuthenticated: true,
 	}
 
-	err := renderTemplate(ctx, http.StatusOK, pages.SpellsPage(pageData))
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+	println(authCookie)
+	err = renderTemplate(ctx, http.StatusOK, pages.SpellsPage(pageData))
 
 	if err != nil {
 		renderErrorPage(ctx, http.StatusNotFound)
 	}
 }
 
-func (server *Server) renderBookspage(ctx *gin.Context) {
+func (server *Server) renderBooksPage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
 	pageData := layouts.PageData {
-		Title: "Your Magic Books",
+		Title: "Loits - Your Magic Books",
 		ActiveLink: "/books",
+		IsAuthenticated: true,
 	}
-	err := renderTemplate(ctx, http.StatusOK, pages.BooksPage(pageData))
+	println(authCookie)
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+
+	//TODO verify cookie
+
+
+	err = renderTemplate(ctx, http.StatusOK, pages.BooksPage(pageData))
 
 	if err != nil {
 		renderErrorPage(ctx, http.StatusNotFound)
 	}
 }
 
-func (server *Server) renderProfilepage(ctx *gin.Context) {
+func (server *Server) renderProfilePage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
 
 	pageData := layouts.PageData {
-		Title: "My Profile",
+		Title: "Loits - My Profile",
 		ActiveLink: "/profile",
+		IsAuthenticated: true,
 	}
-	err := renderTemplate(ctx, http.StatusOK, pages.ProfilePage(pageData))
+
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+	println(authCookie)
+	err = renderTemplate(ctx, http.StatusOK, pages.ProfilePage(pageData))
 
 	if err != nil {
 		renderErrorPage(ctx, http.StatusNotFound)
 	}
 }
 
+func (server *Server) renderLoginPage(ctx *gin.Context) {
+	pageData := layouts.PageData {
+		Title: "Loits - Login",
+		ActiveLink: "/login",
+		IsAuthenticated: false,
+	}
+	err := renderTemplate(ctx, http.StatusOK, pages.LoginPage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
+}
+
+func (server *Server) renderRegisterPage(ctx *gin.Context) {
+	err := renderTemplate(ctx, http.StatusOK, pages.RegisterPage())
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
+}

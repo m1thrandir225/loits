@@ -3,8 +3,9 @@ package layouts
 import "m1thrandir225/loits/templates/components/header"
 
 type PageData struct {
-	Title      string
-	ActiveLink string
+	Title           string
+	ActiveLink      string
+	IsAuthenticated bool
 }
 
 templ BaseTemplate(showHeader bool, pageData PageData) {
@@ -23,7 +24,7 @@ templ BaseTemplate(showHeader bool, pageData PageData) {
 		</head>
 		<body class="antialiased">
 			if showHeader {
-				@components.Header(pageData.ActiveLink)
+				@components.Header(pageData.ActiveLink, pageData.IsAuthenticated)
 			}
 			<main class="container mx-auto">
 				{ children... }
