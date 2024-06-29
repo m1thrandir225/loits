@@ -597,6 +597,11 @@ video {
   margin-right: auto;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .flex {
   display: flex;
 }
@@ -641,16 +646,12 @@ video {
   gap: 0.5rem;
 }
 
-.gap-4 {
-  gap: 1rem;
+.gap-6 {
+  gap: 1.5rem;
 }
 
 .gap-8 {
   gap: 2rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
 }
 
 .rounded-md {
@@ -659,10 +660,6 @@ video {
 
 .rounded-sm {
   border-radius: 0.125rem;
-}
-
-.border-2 {
-  border-width: 2px;
 }
 
 .border {
@@ -679,17 +676,18 @@ video {
   background-color: rgb(207 250 254 / var(--tw-bg-opacity));
 }
 
-.p-8 {
-  padding: 2rem;
+.bg-yellow-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 252 232 / var(--tw-bg-opacity));
 }
 
 .p-12 {
   padding: 3rem;
 }
 
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .py-2 {
@@ -702,19 +700,14 @@ video {
   padding-bottom: 1rem;
 }
 
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
 .py-\[120px\] {
   padding-top: 120px;
   padding-bottom: 120px;
 }
 
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .text-center {
@@ -727,6 +720,11 @@ video {
 
 .font-yung {
   font-family: "Yeon Sung", system-ui;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .text-4xl {
@@ -743,24 +741,14 @@ video {
   line-height: 1.75rem;
 }
 
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
 
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
 .font-extrabold {
@@ -769,10 +757,6 @@ video {
 
 .font-medium {
   font-weight: 500;
-}
-
-.font-\[12px\] {
-  font-weight: 12px;
 }
 
 .text-\[\#1E1E1E\] {
@@ -799,16 +783,16 @@ video {
   outline-style: solid;
 }
 
-.outline-2 {
-  outline-width: 2px;
-}
-
 .outline-cyan-200 {
   outline-color: #a5f3fc;
 }
 
 .outline-neutral-100 {
   outline-color: #f5f5f5;
+}
+
+.outline-yellow-200 {
+  outline-color: #fef08a;
 }
 
 .transition-all {

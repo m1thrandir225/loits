@@ -128,7 +128,12 @@ func (server *Server) renderLoginPage(ctx *gin.Context) {
 }
 
 func (server *Server) renderRegisterPage(ctx *gin.Context) {
-	err := renderTemplate(ctx, http.StatusOK, pages.RegisterPage())
+	pageData := layouts.PageData {
+		Title: "Loits - Register",
+		ActiveLink: "/register",
+		IsAuthenticated: false,
+	}
+	err := renderTemplate(ctx, http.StatusOK, pages.RegisterPage(pageData))
 
 	if err != nil {
 		renderErrorPage(ctx, http.StatusNotFound)
