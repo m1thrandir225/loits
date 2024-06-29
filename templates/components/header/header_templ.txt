@@ -1,2 +1,2 @@
-<header class=\"w-full flex\"><div class=\"container mx-auto flex flex-row items-center justify-between\"><h1 class=\"text-xl text-center text-cyan\">Loits </h1><div class=\"flex flex-row items-center gap-4\">
+<header class=\"flex w-full py-4\"><div class=\"container flex flex-row items-center justify-between mx-auto\"><h1 class=\"text-[48px] text-center text-cyan font-yung\">Loits </h1><div class=\"flex flex-row items-center gap-8\">
 </div></div></header>

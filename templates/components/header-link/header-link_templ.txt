@@ -1,3 +1,6 @@
 <a href=\"
-\" class=\"text-lg font-normal text-underline text-[#1E1E1E] hover:text-white transition-all ease-in-out duration-100\">
+\" class=\"text-lg font-extrabold transition-all duration-100 ease-in-out font-nanum text-underline hover:text-neutral-200 text-cyan-600\">
+</a>
+<a href=\"
+\" class=\"text-lg font-nanum font-medium text-underline text-[#1E1E1E] hover:text-cyan-600 transition-all ease-in-out duration-100\">
 </a>

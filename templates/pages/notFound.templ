@@ -1,0 +1,11 @@
+package pages;
+
+import "m1thrandir225/loits/templates/layouts"
+
+templ ErrorPage(errorCode string) {
+	@layouts.BaseTemplate(false, layouts.PageData{}) {
+		<div class="flex flex-col items-center justify-center w-full h-full gap-2">
+			<h1 class="text-4xl text-cyan-200">{ errorCode }</h1>
+		</div>
+	}
+}

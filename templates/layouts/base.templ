@@ -2,36 +2,32 @@ package layouts
 
 import "m1thrandir225/loits/templates/components/header"
 
-templ BaseTemplate(showHeader bool) {
-    if  showHeader {
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <title>/* TODO: add title component */</title>
-                <meta charset="UTF-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <link rel="stylesheet" href="/static/output.css" />
-            </head>
-            <body class="antialiased">
-                @components.Header()
-                <main>
-                    { children...}
-                </main>
-            </body>
-        </html>
-    } else {
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <title>/* TODO: add title component */</title>
-                <meta charset="UTF-8"/>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <link rel="stylesheet" href="/static/output.css" />
-            </head>
-            <body class="antialiased">
-                { children... }
-            </body>
-        </html>
-    }
+type PageData struct {
+	Title      string
+	ActiveLink string
+}
 
+templ BaseTemplate(showHeader bool, pageData PageData) {
+	<html lang="en">
+		<head>
+			<title>
+				{ pageData.Title }
+			</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet"/>
+			<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap" rel="stylesheet"/>
+			<link rel="stylesheet" href="/static/output.css"/>
+		</head>
+		<body class="antialiased">
+			if showHeader {
+				@components.Header(pageData.ActiveLink)
+			}
+			<main class="container mx-auto">
+				{ children... }
+			</main>
+		</body>
+	</html>
 }

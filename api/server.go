@@ -1,23 +1,16 @@
 package api
 
 import (
-	"github.com/a-h/templ"
-	"github.com/gin-gonic/gin"
 	db "m1thrandir225/loits/db/sqlc"
-	"m1thrandir225/loits/templates"
 	"m1thrandir225/loits/util"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
 	config util.Config
 	store  db.Store
 	router *gin.Engine
-}
-
-func renderTemplate(c *gin.Context, status int, template templ.Component) error {
-	c.Status(status)
-	return template.Render(c.Request.Context(), c.Writer)
 }
 
 func NewServer(config util.Config, store db.Store) (*Server, error) {
@@ -37,9 +30,17 @@ func (server *Server) setupRouter() {
 
 	router.Static("/static", "./public")
 
-	router.GET("/html", func(c *gin.Context) {
-		renderTemplate(c, http.StatusOK, templates.HomePage("hello world"))
-	})
+	/**
+	* HTML Pages
+	*/
+	router.GET("/", server.renderHomepage)
+	router.GET("/profile", server.renderProfilepage)
+	router.GET("/books", server.renderBookspage)
+	router.GET("/spells", server.renderSpellspage)
+
+	/**
+	* Api Routes
+	*/
 
 	v1 := router.Group("/api/v1")
 	{
