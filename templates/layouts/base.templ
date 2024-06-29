@@ -1,6 +1,6 @@
 package layouts
 
-import "m1thrandir225/loits/templates/components/header"
+import "m1thrandir225/loits/templates/components"
 
 type PageData struct {
 	Title           string
@@ -29,6 +29,7 @@ templ BaseTemplate(showHeader bool, pageData PageData) {
 			<main class="container mx-auto">
 				{ children... }
 			</main>
+			@components.Footer()
 		</body>
 	</html>
 }

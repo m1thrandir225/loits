@@ -10,8 +10,6 @@ import "context"
 import "io"
 import "bytes"
 
-import "m1thrandir225/loits/templates/components/header-link"
-
 func Header(currentLink string, isAuthenticated bool) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -30,19 +28,19 @@ func Header(currentLink string, isAuthenticated bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Home", "/", currentLink == "/").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Home", "/", currentLink == "/").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Magic Books", "/books", currentLink == "/books").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Magic Books", "/books", currentLink == "/books").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Spells", "/spells", currentLink == "/spells").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Spells", "/spells", currentLink == "/spells").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Your Profile", "/profile", currentLink == "/profile").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Your Profile", "/profile", currentLink == "/profile").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,11 +53,11 @@ func Header(currentLink string, isAuthenticated bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Login", "/login", currentLink == "/login").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Login", "/login", currentLink == "/login").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.HeaderLink("Register", "/register", currentLink == "/register").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = HeaderLink("Register", "/register", currentLink == "/register").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

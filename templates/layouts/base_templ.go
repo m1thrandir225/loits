@@ -10,7 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
-import "m1thrandir225/loits/templates/components/header"
+import "m1thrandir225/loits/templates/components"
 
 type PageData struct {
 	Title           string
@@ -63,6 +63,14 @@ func BaseTemplate(showHeader bool, pageData PageData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Footer().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

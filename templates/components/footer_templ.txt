@@ -1,0 +1,1 @@
+<footer class=\"w-full py-4\"><p class=\"text-sm text-nanum text-[#1E1E1E] text-center\">2024 - PRESENT © Sebastijan Zindl. </p></footer>
