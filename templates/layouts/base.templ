@@ -30,6 +30,8 @@ templ BaseTemplate(showHeader bool, pageData PageData) {
 				{ children... }
 			</main>
 			@components.Footer()
+			<script src="/static/htmx.min.js"></script>
+			<script src="/static/json-enc.js"></script>
 		</body>
 	</html>
 }

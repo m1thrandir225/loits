@@ -1,4 +1,4 @@
-<header class=\"flex w-full py-4\"><div class=\"container flex flex-row items-center justify-between mx-auto\"><h1 class=\"text-[48px] text-center text-cyan font-yung\">Loits </h1><div class=\"flex flex-row items-center gap-8\">
+<header class=\"flex w-full py-4\"><div class=\"container flex flex-row items-center justify-between mx-auto\"><a href=\"/\"><h1 class=\"text-[48px] text-center text-cyan font-yung\">Loits </h1></a><div class=\"flex flex-row items-center gap-8\">
 </div></div></header>
-<header class=\"flex w-full py-4\"><div class=\"container flex flex-row items-center justify-between mx-auto\"><h1 class=\"text-[48px] text-center text-cyan font-yung\">Loits </h1><div class=\"flex flex-row items-center gap-8\">
+<header class=\"flex w-full py-4\"><div class=\"container flex flex-row items-center justify-between mx-auto\"><a href=\"/\"><h1 class=\"text-[48px] text-center text-cyan font-yung\">Loits </h1></a><div class=\"flex flex-row items-center gap-8\">
 </div></div></header>

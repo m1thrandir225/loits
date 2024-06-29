@@ -5,7 +5,7 @@ import "m1thrandir225/loits/templates/layouts"
 templ LoginPage(pageData layouts.PageData) {
 	@layouts.BaseTemplate(true, pageData) {
 		<div class="flex items-center justify-center w-full py-[120px] ">
-			<div class="flex flex-col items-start justify-start gap-6 p-12 border rounded-md border-neutral-200">
+			<form method="POST" id="loginForm" class="flex flex-col items-start justify-start gap-6 p-12 border rounded-md border-neutral-200">
 				<h3 class="w-full text-2xl text-center font-nanum ">Login </h3>
 				<div class="flex flex-col items-start justify-start w-full gap-2">
 					<label for="email" class="text-lg font-nanum">Email: </label>
@@ -18,7 +18,31 @@ templ LoginPage(pageData layouts.PageData) {
 				<button type="submit" class="w-full px-6 py-2 text-xl transition-all duration-75 ease-in rounded-sm font-nanum bg-cyan-100 outline-cyan-200 hover:outline hover:font-bold">
 					Login
 				</button>
-			</div>
+			</form>
 		</div>
+		<script type="text/javascript">
+			const form = document.getElementById("loginForm")
+
+			form.addEventListener("submit", submitLoginForm)
+
+
+			async function submitLoginForm(e) {
+				e.preventDefault();
+				const email = e.target.elements.email.value
+				const password = e.target.elements.password.value
+
+				const response = await fetch('/api/v1/login', {
+					method: "POST",
+					body: JSON.stringify({
+						magic_name: email,
+						password: password
+					})
+				})
+
+				const json = await response.json()
+
+				console.log(json)
+			}
+		</script>
 	}
 }
