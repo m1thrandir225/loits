@@ -23,6 +23,10 @@ func renderErrorPage(ctx *gin.Context, errorCode int) {
 	}
 }
 
+func (server *Server) renderNotFoundPage(ctx *gin.Context) {
+	renderErrorPage(ctx, http.StatusNotFound)
+}
+
 
 func (server *Server) renderHomePage(ctx *gin.Context) {
 	authCookie, err  := ctx.Cookie("auth")

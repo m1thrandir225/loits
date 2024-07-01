@@ -41,6 +41,8 @@ func (server *Server) setupRouter() {
 	router.GET("/login", server.renderLoginPage)
 	router.GET("/register", server.renderRegisterPage)
 
+	router.NoRoute(server.renderNotFoundPage)
+
 	/**
 	* Api Routes
 	*/

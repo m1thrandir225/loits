@@ -1,2 +1,6 @@
-<div class=\"flex flex-col items-center justify-center w-full h-full gap-2\"><h1 class=\"text-4xl text-cyan-200\">
-</h1></div>
+<div class=\"flex flex-col items-center justify-center w-full h-full gap-2\"><h1 class=\"text-[64px] font-bold text-red-800	 font-nanum\">
+</h1>
+<h1 class=\"text-[36px] font-bold font-yung text-red-900\">Sorry, page not found </h1>
+<h1 class=\"text-[36px] font-bold font-nanum text-red-900\">Sorry, there was an internal problem </h1>
+<h1 class=\"text-[36px] font-bold font-nanum text-red-900\">You are not authorized to view this page </h1>
+<a href=\"/\" class=\"px-6 py-2 text-lg font-bold transition-all duration-75 ease-in-out rounded-md outline-1 outline hover:outline-2 outline-cyan-200 bg-cyan-100 text-cyan-800 font-nanum hover:text-[20px]\">Return home</a></div>

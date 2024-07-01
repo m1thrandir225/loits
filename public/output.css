@@ -681,6 +681,11 @@ video {
   background-color: rgb(254 252 232 / var(--tw-bg-opacity));
 }
 
+.bg-cyan-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(165 243 252 / var(--tw-bg-opacity));
+}
+
 .decoration-slice {
   -webkit-box-decoration-break: slice;
           box-decoration-break: slice;
@@ -756,12 +761,24 @@ video {
   line-height: 1.75rem;
 }
 
+.text-\[64px\] {
+  font-size: 64px;
+}
+
+.text-\[36px\] {
+  font-size: 36px;
+}
+
 .font-extrabold {
   font-weight: 800;
 }
 
 .font-medium {
   font-weight: 500;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 .text-\[\#1E1E1E\] {
@@ -777,6 +794,26 @@ video {
 .text-cyan-600 {
   --tw-text-opacity: 1;
   color: rgb(8 145 178 / var(--tw-text-opacity));
+}
+
+.text-cyan-800 {
+  --tw-text-opacity: 1;
+  color: rgb(21 94 117 / var(--tw-text-opacity));
+}
+
+.text-cyan-900 {
+  --tw-text-opacity: 1;
+  color: rgb(22 78 99 / var(--tw-text-opacity));
+}
+
+.text-red-800 {
+  --tw-text-opacity: 1;
+  color: rgb(153 27 27 / var(--tw-text-opacity));
+}
+
+.text-red-900 {
+  --tw-text-opacity: 1;
+  color: rgb(127 29 29 / var(--tw-text-opacity));
 }
 
 .underline {
@@ -820,6 +857,14 @@ video {
   outline-style: solid;
 }
 
+.outline-2 {
+  outline-width: 2px;
+}
+
+.outline-1 {
+  outline-width: 1px;
+}
+
 .outline-cyan-200 {
   outline-color: #a5f3fc;
 }
@@ -830,6 +875,10 @@ video {
 
 .outline-yellow-200 {
   outline-color: #fef08a;
+}
+
+.outline-cyan-400 {
+  outline-color: #22d3ee;
 }
 
 .transition-all {
@@ -854,8 +903,20 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.hover\:text-\[24px\]:hover {
+  font-size: 24px;
+}
+
+.hover\:text-\[20px\]:hover {
+  font-size: 20px;
+}
+
 .hover\:font-bold:hover {
   font-weight: 700;
+}
+
+.hover\:font-extrabold:hover {
+  font-weight: 800;
 }
 
 .hover\:text-cyan-600:hover {
@@ -868,10 +929,18 @@ video {
   color: rgb(229 229 229 / var(--tw-text-opacity));
 }
 
+.hover\:text-\[20\]:hover {
+  color: 20;
+}
+
 .hover\:opacity-80:hover {
   opacity: 0.8;
 }
 
 .hover\:outline:hover {
   outline-style: solid;
+}
+
+.hover\:outline-2:hover {
+  outline-width: 2px;
 }
