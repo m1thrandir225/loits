@@ -592,14 +592,14 @@ video {
   position: static;
 }
 
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .flex {
@@ -681,6 +681,11 @@ video {
   background-color: rgb(254 252 232 / var(--tw-bg-opacity));
 }
 
+.decoration-slice {
+  -webkit-box-decoration-break: slice;
+          box-decoration-break: slice;
+}
+
 .p-12 {
   padding: 3rem;
 }
@@ -688,6 +693,11 @@ video {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .py-2 {
@@ -703,11 +713,6 @@ video {
 .py-\[120px\] {
   padding-top: 120px;
   padding-bottom: 120px;
-}
-
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 
 .text-center {
@@ -774,9 +779,41 @@ video {
   color: rgb(8 145 178 / var(--tw-text-opacity));
 }
 
+.underline {
+  text-decoration-line: underline;
+}
+
+.decoration-yellow-400 {
+  text-decoration-color: #facc15;
+}
+
+.decoration-yellow-800 {
+  text-decoration-color: #854d0e;
+}
+
+.decoration-yellow-600 {
+  text-decoration-color: #ca8a04;
+}
+
+.decoration-yellow-500 {
+  text-decoration-color: #eab308;
+}
+
+.underline-offset-2 {
+  text-underline-offset: 2px;
+}
+
 .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.accent-cyan-400 {
+  accent-color: #22d3ee;
+}
+
+.accent-yellow-400 {
+  accent-color: #facc15;
 }
 
 .outline {
@@ -829,6 +866,10 @@ video {
 .hover\:text-neutral-200:hover {
   --tw-text-opacity: 1;
   color: rgb(229 229 229 / var(--tw-text-opacity));
+}
+
+.hover\:opacity-80:hover {
+  opacity: 0.8;
 }
 
 .hover\:outline:hover {

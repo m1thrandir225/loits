@@ -2,7 +2,7 @@ package components;
 
 templ HeaderLink(name, link string, isActive bool) {
 	if isActive {
-		<a href={ templ.URL(link) } class="text-lg font-extrabold transition-all duration-100 ease-in-out font-nanum text-underline hover:text-neutral-200 text-cyan-600">
+		<a href={ templ.URL(link) } class="text-lg font-extrabold underline transition-all duration-100 ease-in-out font-nanum text-underline hover:opacity-80 text-cyan-600 underline-offset-2 decoration-yellow-500 decoration-slice">
 			{ name }
 		</a>
 	} else {

@@ -34,11 +34,10 @@ templ LoginPage(pageData layouts.PageData) {
 				const response = await fetch('/api/v1/login', {
 					method: "POST",
 					body: JSON.stringify({
-						magic_name: email,
+						email: email,
 						password: password
 					})
 				})
-
 				const json = await response.json()
 
 				console.log(json)

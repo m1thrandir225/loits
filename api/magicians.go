@@ -44,7 +44,7 @@ type changePasswordRequest struct {
 }
 
 type loginRequest struct {
-	Email string `json:"magic_name", binding:"required"`
+	Email string `json:"email", binding:"required"`
 	Password string `json:"password", binding:"required"`
 }
 
