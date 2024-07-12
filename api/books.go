@@ -2,6 +2,8 @@ package api
 
 import (
 	db "m1thrandir225/loits/db/sqlc"
+	"m1thrandir225/loits/templates/layouts"
+	"m1thrandir225/loits/templates/pages"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -101,4 +103,30 @@ func (server *Server) deleteSpellBook(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusOK)
+}
+
+
+
+func (server *Server) renderBooksPage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
+	pageData := layouts.PageData {
+		Title: "Loits - Your Magic Books",
+		ActiveLink: "/books",
+		IsAuthenticated: true,
+	}
+	println(authCookie)
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+
+	//TODO verify cookie
+
+
+	err = renderTemplate(ctx, http.StatusOK, pages.BooksPage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
 }

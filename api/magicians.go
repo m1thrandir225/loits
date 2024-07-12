@@ -2,6 +2,8 @@ package api
 
 import (
 	db "m1thrandir225/loits/db/sqlc"
+	"m1thrandir225/loits/templates/layouts"
+	"m1thrandir225/loits/templates/pages"
 	"net/http"
 	"time"
 
@@ -48,6 +50,12 @@ type loginRequest struct {
 	Password string `json:"password", binding:"required"`
 }
 
+type createMagicianResponse struct {
+	Magician db.Magician `json:"user"`
+	AccessToken string `json:"AccessToken"`
+
+}
+
 //TODO: implement authentication middleware
 func (server *Server) register(ctx *gin.Context) {
 	var req createMagicianRequest
@@ -72,7 +80,20 @@ func (server *Server) register(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, new)
+
+	token, err := server.tokenMaker.CreateToken(new.Email, server.config.AccessTokenDuration)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	response := createMagicianResponse {
+		Magician: new,
+		AccessToken: token,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 //TODO: implement authentication middleware
@@ -244,4 +265,76 @@ func (server *Server) deleteMagician(ctx *gin.Context) {
 		return
 	}
 	ctx.Status(http.StatusOK)
+}
+
+
+func (server *Server) renderLoginPage(ctx *gin.Context) {
+	pageData := layouts.PageData {
+		Title: "Loits - Login",
+		ActiveLink: "/login",
+		IsAuthenticated: false,
+	}
+	err := renderTemplate(ctx, http.StatusOK, pages.LoginPage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
+}
+
+func (server *Server) renderRegisterPage(ctx *gin.Context) {
+	pageData := layouts.PageData {
+		Title: "Loits - Register",
+		ActiveLink: "/register",
+		IsAuthenticated: false,
+	}
+	err := renderTemplate(ctx, http.StatusOK, pages.RegisterPage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
+}
+
+func (server *Server) renderProfilePage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
+	pageData := layouts.PageData {
+		Title: "Loits - My Profile",
+		ActiveLink: "/profile",
+		IsAuthenticated: true,
+	}
+
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+	println(authCookie)
+	err = renderTemplate(ctx, http.StatusOK, pages.ProfilePage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
+}
+
+
+func (server *Server) renderHomePage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
+	pageData := layouts.PageData {
+		Title: "Loits - Home",
+		ActiveLink: "/",
+		IsAuthenticated: true,
+	}
+
+	println(authCookie)
+
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+
+	err = renderTemplate(ctx, http.StatusOK, pages.HomePage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
 }

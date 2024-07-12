@@ -2,6 +2,8 @@ package api
 
 import (
 	db "m1thrandir225/loits/db/sqlc"
+	"m1thrandir225/loits/templates/layouts"
+	"m1thrandir225/loits/templates/pages"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -189,4 +191,27 @@ func (server *Server) deleteSpell(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusOK)
+}
+
+
+func (server *Server) renderSpellsPage(ctx *gin.Context) {
+	authCookie, err  := ctx.Cookie("auth")
+
+
+	pageData := layouts.PageData {
+		Title: "Loits - Your Spells",
+		ActiveLink: "/spells",
+		IsAuthenticated: true,
+	}
+
+	if err != nil {
+		pageData.IsAuthenticated = false
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+	}
+	println(authCookie)
+	err = renderTemplate(ctx, http.StatusOK, pages.SpellsPage(pageData))
+
+	if err != nil {
+		renderErrorPage(ctx, http.StatusNotFound)
+	}
 }

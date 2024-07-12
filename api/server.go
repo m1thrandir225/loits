@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	db "m1thrandir225/loits/db/sqlc"
+	"m1thrandir225/loits/token"
 	"m1thrandir225/loits/util"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +13,20 @@ type Server struct {
 	config util.Config
 	store  db.Store
 	router *gin.Engine
+	tokenMaker token.Maker
 }
 
 func NewServer(config util.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err)
+	}
 
 	server := &Server{
 		config: config,
 		store:  store,
+		tokenMaker: tokenMaker,
 	}
 
 	server.setupRouter()
