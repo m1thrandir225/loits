@@ -34,6 +34,23 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	return server, nil
 }
 
+func (server *Server) verifyAuthCookie(cookie string) bool {
+
+	payload, err := server.tokenMaker.VerifyToken(cookie)
+
+	if err != nil {
+		return false
+	}
+
+	err = payload.Valid()
+
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
