@@ -54,11 +54,16 @@ type createMagicianResponse struct {
 	AccessToken string      `json:"access_token"`
 }
 
-// TODO: leave out the password and other unecessary fields
 type loginResponse struct {
-	AccessToken string      `json:"access_token"`
-	Magician    db.Magician `json:"user"`
+	AccessToken  string         `json:"access_token"`
+	OriginalName string         `json:"original_name"`
+	MagicName    string         `json:"magic_name" binding:"required"`
+	Email        string         `json:"email" binding:"required"`
+	Birthday     string         `json:"birthday" binding:"required"`
+	MagicRating  db.MagicRating `json:"magic_rating", binding:"required"`
 }
+
+const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 // TODO: implement authentication middleware
 func (server *Server) register(ctx *gin.Context) {
@@ -68,7 +73,6 @@ func (server *Server) register(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	const layout = "Jan 2, 2006 at 3:04pm (MST)"
 	birthdayDate, err := time.Parse(layout, req.Birthday)
 
 	if err != nil {
@@ -107,7 +111,6 @@ func (server *Server) register(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// TODO: implement authentication middleware
 func (server *Server) login(ctx *gin.Context) {
 	var req loginRequest
 
@@ -136,8 +139,12 @@ func (server *Server) login(ctx *gin.Context) {
 	}
 
 	response := loginResponse{
-		Magician:    magician,
-		AccessToken: token,
+		OriginalName: magician.OriginalName,
+		Email:        magician.Email,
+		MagicRating:  magician.MagicalRating,
+		Birthday:     magician.Birthday.Format(layout),
+		MagicName:    magician.MagicName,
+		AccessToken:  token,
 	}
 
 	ctx.JSON(http.StatusOK, response)
