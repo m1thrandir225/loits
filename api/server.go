@@ -10,9 +10,9 @@ import (
 )
 
 type Server struct {
-	config util.Config
-	store  db.Store
-	router *gin.Engine
+	config     util.Config
+	store      db.Store
+	router     *gin.Engine
 	tokenMaker token.Maker
 }
 
@@ -24,8 +24,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	}
 
 	server := &Server{
-		config: config,
-		store:  store,
+		config:     config,
+		store:      store,
 		tokenMaker: tokenMaker,
 	}
 
@@ -41,7 +41,7 @@ func (server *Server) setupRouter() {
 
 	/**
 	* HTML Pages
-	*/
+	 */
 	router.GET("/", server.renderHomePage)
 	router.GET("/profile", server.renderProfilePage)
 	router.GET("/books", server.renderBooksPage)
@@ -50,47 +50,49 @@ func (server *Server) setupRouter() {
 	router.GET("/login", server.renderLoginPage)
 	router.GET("/register", server.renderRegisterPage)
 
-	router.NoRoute(server.renderNotFoundPage)
+	//router.NoRoute(server.renderNotFoundPage)
 
 	/**
 	* Api Routes
-	*/
+	 */
 
 	v1 := router.Group("/api/v1")
-	{
-		/**
-		* Authentication
-		 */
-		v1.POST("/register", server.register)
-		v1.POST("/login", server.login)
-		v1.POST("/change-password", server.changePassword)
 
-		/**
-		* Spells
-		 */
-		v1.GET("/spells/:id", server.getSpellById)
-		v1.POST("/spells/", server.createSpell)
-		v1.PUT("/spells/:id", server.updateSpell)
-		v1.PUT("/spells/:id/move", server.updateSpellElement)
-		v1.DELETE("/spells/:id", server.deleteSpell)
+	authRoutes := v1.Group("/").Use(authMiddleware(server.tokenMaker))
 
-		/**
-		* Spell Books
-		 */
-		v1.POST("/books/", server.createSpellBook)
-		v1.GET("/books/:id", server.getSpellBookById)
-		v1.GET("/books/:id/spells", server.getSpellsByBook)
-		v1.DELETE("/books/:id", server.deleteSpellBook)
+	/**
+	* Authentication
+	 */
+	v1.POST("/register", server.register)
+	v1.POST("/login", server.login)
 
-		/**
-		* Magicians
-		 */
-		v1.GET("/magician/:id", server.getMagician)
-		v1.PUT("/magician/:id", server.updateMagician)
-		v1.PUT("/magician/:id/magic-rating", server.updateMagicianMagicRating)
-		v1.DELETE("/magician/:id", server.deleteMagician)
-		v1.GET("/magician/:id/books", server.getUserSpellBooks)
-	}
+	authRoutes.POST("/change-password", server.changePassword)
+
+	/**
+	* Spells
+	 */
+	authRoutes.GET("/spells/:id", server.getSpellById)
+	authRoutes.POST("/spells/", server.createSpell)
+	authRoutes.PUT("/spells/:id", server.updateSpell)
+	authRoutes.PUT("/spells/:id/move", server.updateSpellElement)
+	authRoutes.DELETE("/spells/:id", server.deleteSpell)
+
+	/**
+	* Spell Books
+	 */
+	authRoutes.POST("/books/", server.createSpellBook)
+	authRoutes.GET("/books/:id", server.getSpellBookById)
+	authRoutes.GET("/books/:id/spells", server.getSpellsByBook)
+	authRoutes.DELETE("/books/:id", server.deleteSpellBook)
+
+	/**
+	* Magicians
+	 */
+	authRoutes.GET("/magician/:id", server.getMagician)
+	authRoutes.PUT("/magician/:id", server.updateMagician)
+	authRoutes.PUT("/magician/:id/magic-rating", server.updateMagicianMagicRating)
+	authRoutes.DELETE("/magician/:id", server.deleteMagician)
+	authRoutes.GET("/magician/:id/books", server.getUserSpellBooks)
 
 	server.router = router
 }

@@ -16,29 +16,28 @@ type getMagicianByIdRequest struct {
 }
 
 type createMagicianRequest struct {
-	OriginalName string `json:"original_name" binding:"required"`
-	MagicName   string `json:"magic_name" binding:"required"`
-	Email       string `json:"email" binding:"required, email"`
-	Password   string `json:"password" binding:"required"`
-	Birthday time.Time `json:"birthday" binding:"required"`
-	MagicRating db.MagicRating `json:"magic_rating", binding:"required"`
+	OriginalName string         `json:"original_name" binding:"required"`
+	MagicName    string         `json:"magic_name" binding:"required"`
+	Email        string         `json:"email" binding:"required"`
+	Password     string         `json:"password" binding:"required"`
+	Birthday     string         `json:"birthday" binding:"required"`
+	MagicRating  db.MagicRating `json:"magic_rating", binding:"required"`
 }
 
 type updateMagicianRequest struct {
-	Email string `json:"email" binding:"required"`
-	EmailDoUpdate bool `json:"email_do_update"`
-	OriginalName string `json:"original_name"`
-	OriginalNameDoUpdate bool `json:"original_name_do_update"`
-	MagicName string `json:"magic_name"`
-	MagicNameDoUpdate bool `json:"magic_name_do_update"`
-	Birthday time.Time `json:"birthday"`
-	BirthdayDoUpdate bool `json:"birthday_do_update"`
+	Email                string    `json:"email" binding:"required"`
+	EmailDoUpdate        bool      `json:"email_do_update"`
+	OriginalName         string    `json:"original_name"`
+	OriginalNameDoUpdate bool      `json:"original_name_do_update"`
+	MagicName            string    `json:"magic_name"`
+	MagicNameDoUpdate    bool      `json:"magic_name_do_update"`
+	Birthday             time.Time `json:"birthday"`
+	BirthdayDoUpdate     bool      `json:"birthday_do_update"`
 }
 
 type updateMagicianMagicRatingRequest struct {
 	MagicRating db.MagicRating `json:"magic_rating" binding:"required"`
 }
-
 
 type changePasswordRequest struct {
 	OldPassword string `json:"old_password" binding:"required"`
@@ -46,17 +45,22 @@ type changePasswordRequest struct {
 }
 
 type loginRequest struct {
-	Email string `json:"email", binding:"required"`
+	Email    string `json:"email", binding:"required"`
 	Password string `json:"password", binding:"required"`
 }
 
 type createMagicianResponse struct {
-	Magician db.Magician `json:"user"`
-	AccessToken string `json:"AccessToken"`
-
+	Magician    db.Magician `json:"user"`
+	AccessToken string      `json:"access_token"`
 }
 
-//TODO: implement authentication middleware
+// TODO: leave out the password and other unecessary fields
+type loginResponse struct {
+	AccessToken string      `json:"access_token"`
+	Magician    db.Magician `json:"user"`
+}
+
+// TODO: implement authentication middleware
 func (server *Server) register(ctx *gin.Context) {
 	var req createMagicianRequest
 
@@ -64,13 +68,20 @@ func (server *Server) register(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	const layout = "Jan 2, 2006 at 3:04pm (MST)"
+	birthdayDate, err := time.Parse(layout, req.Birthday)
 
-	arg := db.CreateMagicianParams {
-		Email: req.Email,
-		Birthday: req.Birthday,
-		OriginalName: req.OriginalName,
-		Password: req.Password,
-		MagicName: req.MagicName,
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	arg := db.CreateMagicianParams{
+		Email:         req.Email,
+		Birthday:      birthdayDate,
+		OriginalName:  req.OriginalName,
+		Password:      req.Password,
+		MagicName:     req.MagicName,
 		MagicalRating: req.MagicRating,
 	}
 
@@ -88,15 +99,15 @@ func (server *Server) register(ctx *gin.Context) {
 		return
 	}
 
-	response := createMagicianResponse {
-		Magician: new,
+	response := createMagicianResponse{
+		Magician:    new,
 		AccessToken: token,
 	}
 
 	ctx.JSON(http.StatusOK, response)
 }
 
-//TODO: implement authentication middleware
+// TODO: implement authentication middleware
 func (server *Server) login(ctx *gin.Context) {
 	var req loginRequest
 
@@ -104,7 +115,7 @@ func (server *Server) login(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	
+
 	magician, err := server.store.GetMagicianByEmail(ctx, req.Email)
 
 	if err != nil {
@@ -112,15 +123,28 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	if magician.Password == req.Password {
-		ctx.JSON(http.StatusOK, "You are logged in!")
+	if magician.Password != req.Password {
+		ctx.JSON(http.StatusUnauthorized, "Invalid password")
+		return
 	}
 
-	ctx.JSON(http.StatusUnauthorized, "Invalid password")
+	token, err := server.tokenMaker.CreateToken(magician.Email, server.config.AccessTokenDuration)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	response := loginResponse{
+		Magician:    magician,
+		AccessToken: token,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
 }
 
-
-//TODO: implement authentication middleware
+// TODO: implement authentication middleware
 func (server *Server) changePassword(ctx *gin.Context) {
 	var uriBind getMagicianByIdRequest
 	var req changePasswordRequest
@@ -148,7 +172,7 @@ func (server *Server) changePassword(ctx *gin.Context) {
 	}
 
 	arg := db.UpdatePasswordParams{
-		ID: uriBind.ID,
+		ID:       uriBind.ID,
 		Password: req.NewPassword,
 	}
 
@@ -170,16 +194,14 @@ func (server *Server) getMagician(ctx *gin.Context) {
 		return
 	}
 
-	magician, err := server.store.GetMagicianById(ctx, uriBind.ID);
+	magician, err := server.store.GetMagicianById(ctx, uriBind.ID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return;
+		return
 	}
 	ctx.JSON(http.StatusOK, magician)
 }
-
-
 
 func (server *Server) updateMagician(ctx *gin.Context) {
 	var uriBind getMagicianByIdRequest
@@ -195,16 +217,16 @@ func (server *Server) updateMagician(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.UpdateMagicianParams {
-		ID: uriBind.ID,
-		EmailDoUpdate: req.EmailDoUpdate,
-		Email: req.Email,
-		BirthdayDoUpdate: req.BirthdayDoUpdate,
-		Birthday: req.Birthday,
+	arg := db.UpdateMagicianParams{
+		ID:                   uriBind.ID,
+		EmailDoUpdate:        req.EmailDoUpdate,
+		Email:                req.Email,
+		BirthdayDoUpdate:     req.BirthdayDoUpdate,
+		Birthday:             req.Birthday,
 		OriginalNameDoUpdate: req.OriginalNameDoUpdate,
-		OriginalName: req.OriginalName,
-		MagicNameDoUpdate: req.MagicNameDoUpdate,
-		MagicName: req.MagicName,
+		OriginalName:         req.OriginalName,
+		MagicNameDoUpdate:    req.MagicNameDoUpdate,
+		MagicName:            req.MagicName,
 	}
 
 	updated, err := server.store.UpdateMagician(ctx, arg)
@@ -216,9 +238,9 @@ func (server *Server) updateMagician(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updated)
 }
 
-/** 
+/**
 * PUT /magicians/{id}/rating
-*/
+ */
 func (server *Server) updateMagicianMagicRating(ctx *gin.Context) {
 	var uriBind getMagicianByIdRequest
 	var req updateMagicianMagicRatingRequest
@@ -233,8 +255,8 @@ func (server *Server) updateMagicianMagicRating(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.UpdateMagicianRatinParams {
-		ID: uriBind.ID,
+	arg := db.UpdateMagicianRatinParams{
+		ID:            uriBind.ID,
 		MagicalRating: req.MagicRating,
 	}
 
@@ -247,9 +269,9 @@ func (server *Server) updateMagicianMagicRating(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updated)
 }
 
-/** 
+/**
 * DELETE /magicians/{id}
-*/
+ */
 func (server *Server) deleteMagician(ctx *gin.Context) {
 	var uriBind getMagicianByIdRequest
 
@@ -267,11 +289,10 @@ func (server *Server) deleteMagician(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-
 func (server *Server) renderLoginPage(ctx *gin.Context) {
-	pageData := layouts.PageData {
-		Title: "Loits - Login",
-		ActiveLink: "/login",
+	pageData := layouts.PageData{
+		Title:           "Loits - Login",
+		ActiveLink:      "/login",
 		IsAuthenticated: false,
 	}
 	err := renderTemplate(ctx, http.StatusOK, pages.LoginPage(pageData))
@@ -282,9 +303,9 @@ func (server *Server) renderLoginPage(ctx *gin.Context) {
 }
 
 func (server *Server) renderRegisterPage(ctx *gin.Context) {
-	pageData := layouts.PageData {
-		Title: "Loits - Register",
-		ActiveLink: "/register",
+	pageData := layouts.PageData{
+		Title:           "Loits - Register",
+		ActiveLink:      "/register",
 		IsAuthenticated: false,
 	}
 	err := renderTemplate(ctx, http.StatusOK, pages.RegisterPage(pageData))
@@ -295,11 +316,11 @@ func (server *Server) renderRegisterPage(ctx *gin.Context) {
 }
 
 func (server *Server) renderProfilePage(ctx *gin.Context) {
-	authCookie, err  := ctx.Cookie("auth")
+	authCookie, err := ctx.Cookie("auth")
 
-	pageData := layouts.PageData {
-		Title: "Loits - My Profile",
-		ActiveLink: "/profile",
+	pageData := layouts.PageData{
+		Title:           "Loits - My Profile",
+		ActiveLink:      "/profile",
 		IsAuthenticated: true,
 	}
 
@@ -315,13 +336,12 @@ func (server *Server) renderProfilePage(ctx *gin.Context) {
 	}
 }
 
-
 func (server *Server) renderHomePage(ctx *gin.Context) {
-	authCookie, err  := ctx.Cookie("auth")
+	authCookie, err := ctx.Cookie("auth")
 
-	pageData := layouts.PageData {
-		Title: "Loits - Home",
-		ActiveLink: "/",
+	pageData := layouts.PageData{
+		Title:           "Loits - Home",
+		ActiveLink:      "/",
 		IsAuthenticated: true,
 	}
 
