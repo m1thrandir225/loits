@@ -4,6 +4,7 @@ import (
 	db "m1thrandir225/loits/db/sqlc"
 	"m1thrandir225/loits/templates/layouts"
 	"m1thrandir225/loits/templates/pages"
+	"m1thrandir225/loits/util"
 	"net/http"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 type getMagicianByIdRequest struct {
-	ID pgtype.UUID `uri:"id" binding:"required,min=1"`
+	ID string `uri:"id" binding:"required,min=1"`
 }
 
 type createMagicianRequest struct {
@@ -56,6 +57,7 @@ type createMagicianResponse struct {
 
 type loginResponse struct {
 	AccessToken  string         `json:"access_token"`
+	ID           pgtype.UUID    `json:"id"`
 	OriginalName string         `json:"original_name"`
 	MagicName    string         `json:"magic_name" binding:"required"`
 	Email        string         `json:"email" binding:"required"`
@@ -144,6 +146,7 @@ func (server *Server) login(ctx *gin.Context) {
 		MagicRating:  magician.MagicalRating,
 		Birthday:     magician.Birthday.Format(layout),
 		MagicName:    magician.MagicName,
+		ID:           magician.ID,
 		AccessToken:  token,
 	}
 
@@ -166,7 +169,14 @@ func (server *Server) changePassword(ctx *gin.Context) {
 		return
 	}
 
-	magician, err := server.store.GetMagicianById(ctx, uriBind.ID)
+	uuidID, err := util.StringToUUID(uriBind.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	magician, err := server.store.GetMagicianById(ctx, uuidID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -179,7 +189,7 @@ func (server *Server) changePassword(ctx *gin.Context) {
 	}
 
 	arg := db.UpdatePasswordParams{
-		ID:       uriBind.ID,
+		ID:       uuidID,
 		Password: req.NewPassword,
 	}
 
@@ -201,7 +211,14 @@ func (server *Server) getMagician(ctx *gin.Context) {
 		return
 	}
 
-	magician, err := server.store.GetMagicianById(ctx, uriBind.ID)
+	properUUID, err := util.StringToUUID(uriBind.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	magician, err := server.store.GetMagicianById(ctx, properUUID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -224,8 +241,15 @@ func (server *Server) updateMagician(ctx *gin.Context) {
 		return
 	}
 
+	uuidID, err := util.StringToUUID(uriBind.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
 	arg := db.UpdateMagicianParams{
-		ID:                   uriBind.ID,
+		ID:                   uuidID,
 		EmailDoUpdate:        req.EmailDoUpdate,
 		Email:                req.Email,
 		BirthdayDoUpdate:     req.BirthdayDoUpdate,
@@ -262,8 +286,15 @@ func (server *Server) updateMagicianMagicRating(ctx *gin.Context) {
 		return
 	}
 
+	uuidID, err := util.StringToUUID(uriBind.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
 	arg := db.UpdateMagicianRatinParams{
-		ID:            uriBind.ID,
+		ID:            uuidID,
 		MagicalRating: req.MagicRating,
 	}
 
@@ -287,7 +318,14 @@ func (server *Server) deleteMagician(ctx *gin.Context) {
 		return
 	}
 
-	err := server.store.DeleteMagician(ctx, uriBind.ID)
+	uuidID, err := util.StringToUUID(uriBind.ID)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	err = server.store.DeleteMagician(ctx, uuidID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
