@@ -12,6 +12,7 @@ templ Header(currentLink string, isAuthenticated bool) {
 					@HeaderLink("Magic Books", "/books", currentLink == "/books")
 					@HeaderLink("Spells", "/spells", currentLink == "/spells")
 					@HeaderLink("Your Profile", "/profile", currentLink == "/profile")
+					@HeaderLink("Logout", "/logout", currentLink=="/logout")
 				</div>
 			</div>
 		</header>

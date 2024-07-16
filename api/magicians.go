@@ -410,14 +410,15 @@ func (server *Server) renderHomePage(ctx *gin.Context) {
 
 	isAuthenticated := server.verifyAuthCookie(authCookie)
 
+	if !isAuthenticated {
+		ctx.Redirect(http.StatusMovedPermanently, "/login")
+		return
+	}
+
 	pageData := layouts.PageData{
 		Title:           "Loits - Home",
 		ActiveLink:      "/",
 		IsAuthenticated: isAuthenticated,
-	}
-	if err != nil {
-		pageData.IsAuthenticated = false
-		ctx.Redirect(http.StatusMovedPermanently, "/login")
 	}
 
 	err = renderTemplate(ctx, http.StatusOK, pages.HomePage(pageData))
