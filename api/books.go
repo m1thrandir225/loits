@@ -62,8 +62,6 @@ func (server *Server) getSpellBookById(ctx *gin.Context) {
 	}
 }
 
-
-
 /**
 * GET /magician/{user_id}/books
  */
@@ -105,14 +103,12 @@ func (server *Server) deleteSpellBook(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-
-
 func (server *Server) renderBooksPage(ctx *gin.Context) {
-	authCookie, err  := ctx.Cookie("auth")
+	authCookie, err := ctx.Cookie("auth")
 
-	pageData := layouts.PageData {
-		Title: "Loits - Your Magic Books",
-		ActiveLink: "/books",
+	pageData := layouts.PageData{
+		Title:           "Loits - Your Magic Books",
+		ActiveLink:      "/books",
 		IsAuthenticated: true,
 	}
 	println(authCookie)
@@ -122,7 +118,6 @@ func (server *Server) renderBooksPage(ctx *gin.Context) {
 	}
 
 	//TODO verify cookie
-
 
 	err = renderTemplate(ctx, http.StatusOK, pages.BooksPage(pageData))
 

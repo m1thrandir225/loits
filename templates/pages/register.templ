@@ -5,28 +5,74 @@ import "m1thrandir225/loits/templates/layouts"
 templ RegisterPage(pageData layouts.PageData) {
 	@layouts.BaseTemplate(true, pageData) {
 		<div class="flex items-center justify-center w-full py-[120px] ">
-			<div class="flex flex-col items-start justify-start gap-6 p-12 mx-4 border rounded-md border-neutral-200">
+			<form
+				method="POST"
+				id="registerForm"
+				class="flex flex-col items-start justify-start gap-6 p-12 mx-4 border rounded-md border-neutral-200"
+			>
 				<h3 class="w-full px-8 text-2xl text-center font-nanum">Register </h3>
 				<div class="flex flex-col items-start justify-start w-full gap-2">
 					<label for="email" class="text-lg font-nanum">Email: </label>
-					<input required name="email" type="email" id="email" placeholder="john@gmail.com" class="px-6 py-2 rounded-sm outline outline-neutral-100"/>
+					<input
+						required
+						name="email"
+						type="email"
+						id="email"
+						placeholder="john@gmail.com"
+						class="px-6 py-2 rounded-sm outline outline-neutral-100"
+					/>
 				</div>
 				<div class="flex flex-col items-start justify-start w-full gap-2">
-					<label for="first_name" class="text-lg font-nanum">First Name: </label>
-					<input required name="first_name" type="text" id="first_name" placeholder="Jerald" class="px-6 py-2 rounded-sm outline outline-neutral-100"/>
+					<label for="firstName" class="text-lg font-nanum">First Name: </label>
+					<input
+						required
+						name="firstName"
+						type="text"
+						id="firstName"
+						placeholder="Jerald"
+						class="px-6 py-2 rounded-sm outline outline-neutral-100"
+					/>
 				</div>
 				<div class="flex flex-col items-start justify-start w-full gap-2">
-					<label for="last_name" class="text-lg font-nanum">Last Name: </label>
-					<input required name="last_name" type="text" id="last_name" placeholder="Smith" class="px-6 py-2 rounded-sm outline outline-neutral-100"/>
+					<label for="lastName" class="text-lg font-nanum">Last Name: </label>
+					<input
+						required
+						name="lastName"
+						type="text"
+						id="lastName"
+						placeholder="Smith"
+						class="px-6 py-2 rounded-sm outline outline-neutral-100"
+					/>
+				</div>
+				<div class="flex flex-col items-start justify-start w-full gap-2">
+					<label for="username" class="text-lg font-nanum">Username: </label>
+					<input
+						required
+						name="username"
+						type="text"
+						id="username"
+						placeholder="Magicdestroyer2000"
+						class="px-6 py-2 rounded-sm outline outline-neutral-100"
+					/>
 				</div>
 				<div class="flex flex-col items-start justify-start w-full gap-2">
 					<label for="password" class="text-lg font-nanum">Password: </label>
-					<input required name="password" type="password" id="password" placeholder="Your strong password" class="px-6 py-2 rounded-sm outline outline-neutral-100"/>
+					<input
+						required
+						name="password"
+						type="password"
+						id="password"
+						placeholder="Your strong password"
+						class="px-6 py-2 rounded-sm outline outline-neutral-100"
+					/>
 				</div>
-				<button type="submit" class="w-full px-6 py-2 text-xl transition-all duration-75 ease-in rounded-sm font-nanum bg-yellow-50 outline-yellow-200 hover:outline hover:font-bold">
+				<button
+					type="submit"
+					class="w-full px-6 py-2 text-xl transition-all duration-75 ease-in rounded-sm font-nanum bg-yellow-50 outline-yellow-200 hover:outline hover:font-bold"
+				>
 					Register
 				</button>
-			</div>
+			</form>
 		</div>
 	}
 }
